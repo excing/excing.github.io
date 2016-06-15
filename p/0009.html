@@ -1,0 +1,659 @@
+<html><head>
+	<meta charset="UTF-8">
+	<title>ThreadLocal</title>
+	<meta name="generator" content="iA Writer Pro 1.5.2 (6015)">
+    <link rel="stylesheet" type="text/css" href="../markdown.css">
+    <link rel="stylesheet" type="text/css" href="../prism.css">
+    <link rel="stylesheet" type="text/css" href="../prettify.css">
+    <script type="application/javascript" src="../prettify.min.js"></script>
+    <style type="text/css">
+        img {
+            text-align: center;
+        }
+    </style>
+</head>
+<body onload="prettyPrint()">
+<h1>ThreadLocal</h1>
+
+<p>作者：<a href="http://my.csdn.net/luoyanglizi">lypeer</a></p>
+
+<p>转自：<a href="http://blog.csdn.net/luoyanglizi/article/details/51510233">CSDN</a></p>
+
+<h3>前言</h3>
+
+<p>这一阵子一直在看Picasso，在看的过程中发现了很多很有意思的东西，有的是以前见过甚至用过但是没有深入关注的，有些是以前根本没有见过的——比如今天要讲的ThreadLocal。（<a href="http://lib.csdn.net/base/15">Android</a> 6.0）</p>
+
+<h3>正文</h3>
+
+<h4>ThreadLocal是什么？</h4>
+
+<p>先看一下Android官网的文档：</p>
+
+<blockquote>
+<p>Implements a thread-local storage, that is, a variable for which each thread has its own value. All threads share the same ThreadLocal object, but each sees a different value when accessing it, and changes made by one thread do not affect the other threads. The implementation supports null values. </p>
+
+<p>实现了每个线程的自有变量的存储。所有线程共享同一个ThreadLocal对象，但是每个线程只能访问自己所存储的变量，并且线程之间做的改动互不影响。此实现支持null变量的存储。（非逐词翻译）</p>
+</blockquote>
+
+<p>通过这个描述，我们可以知道一些信息：</p>
+
+<ul>
+<li>ThreadLocal是一个线程的内部存储类，通过它我们可以在指定的线程中存储信息。</li>
+<li>每个线程之间的信息是独立且封闭的。</li>
+</ul>
+
+<p>但是同时也会有一些疑问：</p>
+
+<ul>
+<li>所谓的自有变量是什么？</li>
+<li>通过什么形式存储？</li>
+<li>怎么对存储的信息进行操作？</li>
+<li>怎么实现的线程间的信息封闭且独立？</li>
+<li>等等</li>
+</ul>
+
+<p>接下来我们就慢慢的在探索这个类的过程中，来从头到尾的弄清楚这些个疑问。</p>
+
+<h4>ThreadLocal的用途</h4>
+
+<p>ThreadLocal的作用是实现每个线程的自有变量的存储，这个“自有变量”具体是什么当然要根据不同的需求来定，但是在Android的源码中，这个自有变量常常是Looper。</p>
+
+<p>这个Looper是什么呢？这里就不得不提到Android的消息机制了。Android的消息机制是指Handler的运行机制以及Handler所附带的MessageQueue和Looper的工作过程。简单来讲，就是Handler发送Message到MessageQueue中，而Looper不断的从MessageQueue中循环摘取Message，并进行进一步的解析处理。</p>
+
+<p>但是Looper只是个简单的类而已，它虽然提供了循环处理方面的成员函数loop()，却不能自己凭空地运行起来，而只能寄身于某个真实的线程。那么Looper是怎么和线程建立联系的呢？这个时候ThreadLocal就参与其中了。</p>
+
+<p>我们来看一下Looper的部分源码：</p>
+
+<pre class="prettyprint"><code class="java">private static void prepare(boolean quitAllowed) {
+        if (sThreadLocal.get() != null) {
+            throw new RuntimeException(“Only one Looper may be created per thread”);
+        }
+        //调用ThreadLocal的set()方法将Looper存进去
+        sThreadLocal.set(new Looper(quitAllowed));
+}
+</code></pre>
+
+<pre class="prettyprint"><code class="java">public static void loop() {
+        //调用myLooper()方法得到Looper，我们接着看一下myLooper()方法
+        final Looper me = myLooper();
+        if (me == null) {
+            throw new RuntimeException(“No Looper; Looper.prepare() wasn’t called on this thread.”);
+        }
+        …… ……
+}
+</code></pre>
+
+<pre class="prettyprint"><code class="java">public static @Nullable Looper myLooper() {
+        //调用ThreadLocal的get()方法得到刚才存入的Looper对象
+        return sThreadLocal.get();
+}
+</code></pre>
+
+<p>关于ThreadLocal的set()和get()方法是怎么对Looper进行操作并将其存入Thread中的下文会有详述。在这里我们可以清楚的看到ThreadLocal的踪迹并对它的用途有一个比较清晰的认识：当某个变量是与线程相关的并且不同线程具有不同值的时候，我们就可以考虑使用ThreadLocal这个类来简化我们的工作（比如Looper）。</p>
+
+<p>更多ThreadLocal的具体用途大家可以看下<a href="http://blog.csdn.net/singwhatiwanna">任教主</a>的这篇博文：<a href="http://blog.csdn.net/singwhatiwanna/article/details/48350919">Android的消息机制之ThreadLocal的工作原理</a></p>
+
+<h4>ThreadLocal用法</h4>
+
+<p>它的用法其实挺简单的，暴露出来的方法一共只有三个: </p>
+
+<ul>
+<li>get()：返回调用线程中变量的当前值</li>
+<li>set(T value)：设置调用线程中变量的值</li>
+<li>remove()：移除调用线程的当前变量</li>
+</ul>
+
+<p>用的话也是这三个方法，就跟上面Looper里面的用法差不多。例子的代码如下：</p>
+
+<pre class="prettyprint"><code class="java">mIntegerThreadLocal = new ThreadLocal&lt;&gt;();
+
+mIntegerThreadLocal.set(0);
+//在主线程里设置mIntegerThreadLocal的值为0，输出0
+Log.d(TAG, “[Thread#main]mIntegerThreadLocal=“ + mIntegerThreadLocal.get());
+
+new Thread(“Thread#1”) {
+    @Override
+    public void run() {
+        //设置mIntegerThreadLocal的值为1，输出1
+        mIntegerThreadLocal.set(1);
+        Log.d(TAG, “[Thread#1]mIntegerThreadLocal=“ + mIntegerThreadLocal.get());
+    }
+}.start();
+
+new Thread(“Thread#2”) {
+    @Override
+    public void run() {
+        //不设置任何值，输出null
+        Log.d(TAG, “[Thread#2]mIntegerThreadLocal=“ + mIntegerThreadLocal.get());
+    }
+}.start();
+
+new Thread(“Thread#3”) {
+    @Override
+    public void run() {
+        //设置为3，然后remove，输出null
+        mIntegerThreadLocal.set(3);
+        mIntegerThreadLocal.remove();
+        Log.d(TAG, “[Thread#3]mIntegerThreadLocal=“ + mIntegerThreadLocal.get());
+    }
+}.start();
+</code></pre>
+
+<p>输出结果如下：</p>
+
+<pre class="prettyprint"><code class="shell">05-08 16:08:24.771 14423-14423/com.lypeer.apifinder D/MainActivity: [Thread#main]mIntegerThreadLocal=0
+05-08 16:08:24.774 14423-14447/com.lypeer.apifinder D/MainActivity: [Thread#2]mIntegerThreadLocal=null
+05-08 16:08:24.780 14423-14446/com.lypeer.apifinder D/MainActivity: [Thread#1]mIntegerThreadLocal=1
+05-08 16:08:24.781 14423-14448/com.lypeer.apifinder D/MainActivity: [Thread#3]mIntegerThreadLocal=null
+</code></pre>
+
+<p>事实证明，ThreadLocal确实做到了官方文档里说到的功能：存储Thread的信息，并且每个线程之间信息独立，即它们只能访问自己对应的信息，并且修改自己对应的信息之后对其他线程没有影响。</p>
+
+<h4>源码解析-ThreadLocal</h4>
+
+<h5>构造方法</h5>
+
+<p>先看一下它的构造方法：</p>
+
+<pre class="prettyprint"><code class="java">public ThreadLocal() {}
+</code></pre>
+
+<p>可以的，啥都没干，空构造，这条路子走不通。</p>
+
+<h5>暴露方法</h5>
+
+<ul>
+<li><p>public void set(T value)</p>
+
+<p>接下来从暴露出来的方法入手，先看set()方法：</p>
+
+<pre class="prettyprint"><code class="java">public void set(T value) {
+//Thread.currentThread()方法是一个native的方法，功能是返回调用这个方法的线程
+Thread currentThread = Thread.currentThread();
+Values values = values(currentThread);
+if (values == null) {
+    values = initializeValues(currentThread);
+}
+values.put(this, value);
+}
+</code></pre></li>
+</ul>
+
+<h4>源码解析-Values</h4>
+
+<p>native的方法咱们先不看，知道他是返回调用线程就好了，直接看第二行。第二行出现了一个之前没见过的类：Values。接下来找找Values是何方神圣：</p>
+
+<pre class="prettyprint"><code class="java">static class Values {
+
+        /**
+         * 大小是2的n次方
+         */
+        private static final int INITIAL_SIZE = 16;
+
+        /**
+         * 被删除的数据的占位符，因为是用object数组查询的数据，所以需要这个
+         */
+        private static final Object TOMBSTONE = new Object();
+
+        /**
+         * 存放数据的数组。他存放数据的形式有点像map,是ThreadLocal与value相对应
+         * 
+         * 长度总是2的N次方
+         */
+        private Object[] table;
+
+        /** 用来将hash地址转换为索引 */
+        private int mask;
+
+        /** 当前存活数据的数目 */
+        private int size;
+
+        /** 当前失效数据的数目 */
+        private int tombstones;
+
+        /** 允许的存活数据与失效数据数目总和的最大值 */
+        private int maximumLoad;
+
+        /** 指向下一个要清理的数据 */
+        private int clean;
+</code></pre>
+
+<p>原来Values是ThreadLocal的一个静态的内部类，它的功能就是存储放进来的数据以及对数据进行处理，比如清理失效数据啦，扩展存储的table啦，等等。它存储数据是用的Object数组，并且有一些值来记录当前存活的数据以及失效数据的数目，通过这些数据它可以及时的清理无效的数据并且扩展或者缩小当前table的大小，便于保持当前table的健壮性。</p>
+
+<p>由于这个内部类还是很重要的，我们再往里面挖掘一下它里面的源码，看看到底是怎么一卵回事： </p>
+
+<figure>
+<img src="http://ac-cnyv47la.clouddn.com/cd00dbfdce1476b0.png" alt="">
+</figure>
+
+<p>可以看到，这里面有俩构造方法： </p>
+
+<ul>
+<li>Values()</li>
+<li>Values(Values values)</li>
+</ul>
+
+<p>并且有四个暴露出来的方法： </p>
+
+<ul>
+<li>void put(ThreadLocal&lt;?&gt;, Object)</li>
+<li>void add(ThreadLocal&lt;?&gt;, Object)</li>
+<li>Object getAfterMiss(ThreadLocal&lt;?&gt;)</li>
+<li>void remove(ThreadLocal&lt;?&gt;)</li>
+</ul>
+
+<h5>构造方法</h5>
+
+<pre class="prettyprint"><code class="java">Values() {
+    //初始化table
+    initializeTable(INITIAL_SIZE);
+    this.size = 0;
+    this.tombstones = 0;
+}
+
+Values(Values fromParent) {
+    this.table = fromParent.table.clone();
+    this.mask = fromParent.mask;
+    this.size = fromParent.size;
+    this.tombstones = fromParent.tombstones;
+    this.maximumLoad = fromParent.maximumLoad;
+    this.clean = fromParent.clean;
+    inheritValues(fromParent);
+}
+</code></pre>
+
+<p>这两个构造方法一个是普通的构造，一个是类似于继承的那种，从一个父Values对象来生成新的Values，我们先看普通的这个构造。它就只是做了一些常规的初始化操作，initializeTable(int size)方法是这样的：</p>
+
+<pre class="prettyprint"><code class="java">private void initializeTable(int capacity) {
+    //新建values里面的table，默认大小是32
+    this.table = new Object[capacity * 2];
+    //mask的默认大小是table的长度减一，也就是table中最后一个元素的索引
+    this.mask = table.length - 1;
+    this.clean = 0;
+    //默认的最大load值是capacity的2/3，其实我不是很能理解这个值是怎么得来的
+    this.maximumLoad = capacity * 2 / 3; // 2/3
+}
+</code></pre>
+
+<h5>暴露方法</h5>
+
+<h6>void add(ThreadLocal&lt;?&gt;, Object)</h6>
+
+<pre class="prettyprint"><code class="java">void add(ThreadLocal&lt;?&gt; key, Object value) {
+    for (int index = key.hash &amp; mask;; index = next(index)) {
+        Object k = table[index];
+        if (k == null) {
+            //在index处放入一个键
+            table[index] = key.reference;
+            //在index的下一位放入键对应的值
+            table[index + 1] = value;
+            return;
+        }
+    }
+}
+</code></pre>
+
+<p>上面的代码向我们展示了table存储数据的方式，它是以一种类似于map的方式来存储的，在index处存入map的键，在index的下一位存入键对应的值，而这个键则是ThreadLocal的引用，这里毫无问题。但是有一个地方问题则是大大的有： int index = key.hash &amp; mask 。大家都明白这行代码的作用是获得可用的索引，可是到底是怎么获得的呢？为什么要通过这种方式来获得呢？要解决这个问题，我们要先知道何为“可用的索引”，通过分析观察，我总结出了一些条件： </p>
+
+<ul>
+<li>要是偶数。（这个很显然）</li>
+<li>不能越界。（都比table的边界长了那还了得）</li>
+<li>尽可能分散。（尽可能的新产生的索引不要是已经出现过的数，不然table的空间不能充分的利用，而且观察上面代码，会发现如果新产生的索引是已经出现过的数的话数据根本存不进去）</li>
+</ul>
+
+<p>好的，现在我们来看看这个 <code>int index = key.hash &amp; mask</code> 究竟能不能搞定这个问题。先看mask：</p>
+
+<pre class="prettyprint"><code class="java">this.mask = table.length - 1;
+</code></pre>
+
+<p>mask的值是table的长度减一，而前面我们说过，table的长度总是2<sup>n，</sup> 也就是说，mask总是等于 <code>2^n - 1</code> ，这意味着mask的二进制表示总是n个1，那么这又说明了什么？ <code>key.hash &amp; mask</code> 的结果其实就是 <code>key.hash</code> 的后n位！这样一来，首先上面的第二个条件已经满足了，因为n位无符号二进制数的范围正是 <code>0 ~ (2^n -1)</code> ，刚好在table的范围之内。我们接下来看 <code>key.hash</code> 相关的东西：</p>
+
+<pre class="prettyprint"><code class="java">//1.5之后加入的一个类，它所持有的Integer可以原子的增加，其本身是线程安全的
+private static AtomicInteger hashCounter = new AtomicInteger(0);
+
+/**
+ * Internal hash. We deliberately don’t bother with #hashCode().
+ * Hashes must be even. This ensures that the result of
+ * (hash &amp; (table.length - 1)) points to a key and not a value.
+ *
+ * We increment by Doug Lea’s Magic Number(TM) (*2 since keys are in
+ * every other bucket) to help prevent clustering.
+ */
+private final int hash = hashCounter.getAndAdd(0x61c88647 * 2);
+</code></pre>
+
+<p>hash的初始值是0，然后每次调用hash的时候，它都会先返回给你它的当前值，然后将当前值加上一个(0x61c88647 * 2)。别的先不看，这样一来这个hash肯定是满足上面的第一个条件的：乘2相当于二进制里左移一位，那么最后一位就肯定是0了，这样的话它与mask的与运算得到的结果肯定最后一位是0，也就是换算成十进制之后肯定是偶数。那现在就只剩第三个条件了，到底满不满足呢？答案是肯定的。我们先做一个实验来看一下：</p>
+
+<pre class="prettyprint"><code class="java">/**
+* 压力测试，观察是否满足第三个条件
+*/
+private void testHash(){
+    //n是幂
+    for (int n = 0; ; n++) {
+        //size是table的长度
+        int size = 2 &lt;&lt; n;
+        //indexList装载了在n不变的情况下得到的（2^n -1）个index
+        List&lt;Integer&gt; indexList = new ArrayList&lt;&gt;();
+        //循环(2^n -1)次，每次得到一个index，将其存入list
+        for (int i = 0; i &lt; size; i++) {
+            indexList.add(nextHashCode() &amp; (size - 1));
+        }
+        //对list进行从小到大排序
+        Collections.sort(indexList);
+        //i一方面用来控制indexList的循环，一方面用来检测是否中途跳出循环
+        int i = 1;
+        for (; i &lt; indexList.size(); i++) {
+            //如果当前数值不是比它的上一个数值大一，就跳出，因为如果满足第三个条件的话indexList中此时应该是一个0~(2^n - 1)的自然数数列
+            if (indexList.get(i) - indexList.get(i - 1) != 1) {
+                break;
+            }
+        }
+        if (i == indexList.size()) {
+            Log.e(“Successfully !” , “n = “ + n );
+        }else {
+            Log.e(“Failed !” , “n = “ + n );
+            break;
+        }
+    }
+}
+
+private static AtomicInteger nextHashCode = new AtomicInteger(0);
+
+private static final int HASH_INCREMENT = 0x61c88647;
+
+private static int nextHashCode() {
+    return nextHashCode.getAndAdd(HASH_INCREMENT);
+}
+</code></pre>
+
+<p>得到的结果是：</p>
+
+<pre class="prettyprint"><code class="shell">05-11 21:33:02.749 12212-12212/com.lypeer.apifinder E/Successfully !: n = 0
+05-11 21:33:02.784 12212-12212/com.lypeer.apifinder E/Successfully !: n = 1
+05-11 21:33:02.784 12212-12212/com.lypeer.apifinder E/Successfully !: n = 2
+05-11 21:33:02.784 12212-12212/com.lypeer.apifinder E/Successfully !: n = 3
+05-11 21:33:02.784 12212-12212/com.lypeer.apifinder E/Successfully !: n = 4
+05-11 21:33:02.784 12212-12212/com.lypeer.apifinder E/Successfully !: n = 5
+05-11 21:33:02.784 12212-12212/com.lypeer.apifinder E/Successfully !: n = 6
+05-11 21:33:02.785 12212-12212/com.lypeer.apifinder E/Successfully !: n = 7
+05-11 21:33:02.786 12212-12212/com.lypeer.apifinder E/Successfully !: n = 8
+05-11 21:33:02.788 12212-12212/com.lypeer.apifinder E/Successfully !: n = 9
+05-11 21:33:02.792 12212-12212/com.lypeer.apifinder E/Successfully !: n = 10
+05-11 21:33:02.802 12212-12212/com.lypeer.apifinder E/Successfully !: n = 11
+05-11 21:33:02.822 12212-12212/com.lypeer.apifinder E/Successfully !: n = 12
+05-11 21:33:02.866 12212-12212/com.lypeer.apifinder E/Successfully !: n = 13
+05-11 21:33:02.955 12212-12212/com.lypeer.apifinder E/Successfully !: n = 14
+05-11 21:33:03.191 12212-12212/com.lypeer.apifinder E/Successfully !: n = 15
+05-11 21:33:03.714 12212-12212/com.lypeer.apifinder E/Successfully !: n = 16
+05-11 21:33:04.866 12212-12212/com.lypeer.apifinder E/Successfully !: n = 17
+05-11 21:33:07.285 12212-12212/com.lypeer.apifinder E/Successfully !: n = 18
+05-11 21:33:13.703 12212-12212/com.lypeer.apifinder E/Successfully !: n = 19
+05-11 21:33:28.588 12212-12212/com.lypeer.apifinder E/Successfully !: n = 20
+05-11 21:33:59.306 12212-12212/com.lypeer.apifinder E/art: Throwing OutOfMemoryError “Failed to allocate a 8388620 byte allocation with 6794736 free bytes and 6MB until OOM”
+</code></pre>
+
+<p>我们可以看到，模拟得到的数据还是很棒的，一直到程序因为oom而崩溃，我们的程序都表现良好。那么怎么从理论上来解释它呢？继续看下去。</p>
+
+<p>上面提到了一个奇怪的数字：0x61c88647，根源就在它的身上。它转换成为有符号32位二进制数是 <code>0110 0001 1100 1000 1000 0110 0100 0111，那么它的负数就是1110 0001 1100 1000 1000 0110 0100 0111</code> （为什么这里可以用它的负数呢，因为其实它和它的负数在运算的时候结果是一样的，一方面根本到不了符号位就已经内存溢出了，一方面在ThreadLocal里运算的时候是有一个×2的，所以它的符号位其实已经没有了），运用计算机的一些知识我们可以知道在底层运算的时候其实是用的它的补码，即 <code>1001 1110 0011 0111 0111 1001 1011 1001</code> ，这个数的十进制数是2654435769，而2654435769这个数就有点意思了。 </p>
+
+<figure>
+<img src="http://ac-cnyv47la.clouddn.com/e3449e65a5af2ae8.png" alt="">
+</figure>
+
+<p>通过这个数，我们可以得到一个斐波拉契散列——这个散列中的数是绝对分散且不重复的——也就是说上面条件的第三点也已经满足了。那么为什么这个数会有这么神奇的性质呢？想要进一步探索的读者可以前往这里看看：<a href="http://www.brpreiss.com/books/opus4/html/page214.html">Fibonacci Hashing</a>。</p>
+
+<p>ok，通过上面的一系列验证，我们成功的证明了 <code>int index = key.hash &amp; mask</code> 确实可以产生有效的索引值，并且解释了其产生索引值的原理。但是还有一个关键性的问题没有解决：为什么这个类的设计者要如此大费周章的引入斐波拉契散列，黄金比这样的东西来产生有用的索引，而不干脆直接的就用一个 i 什么的值递增呢？看下去，这个问题后面再解答。</p>
+
+<h6>void put(ThreadLocal&lt;?&gt;)</h6>
+
+<pre class="prettyprint"><code class="java">void put(ThreadLocal&lt;?&gt; key, Object value) {
+    cleanUp();
+
+    //标志第一个失效键的index
+    int firstTombstone = -1;
+    //获取当前index
+    for (int index = key.hash &amp; mask;; index = next(index)) {
+        Object k = table[index];
+        //如果键相同，就用传进来的值替换原来的值
+        if (k == key.reference) {
+            // Replace existing entry.
+            table[index + 1] = value;
+            return;
+        }
+        //如果键为空，就放入传进来的键值
+        if (k == null) {
+            //firstTombstone == -1表示firstTombstone还没有改变过，即循环到现在还没有发现失效键
+            if (firstTombstone == -1) {
+                //放入传进来的键值
+                table[index] = key.reference;
+                table[index + 1] = value;
+                size++;
+                return;
+            }
+
+            // 如果firstTombstone ！= -1，说明上一个循环中遇到了失效键，那么就将放入传进来的键值放入那个失效键值的位置
+            table[firstTombstone] = key.reference;
+            table[firstTombstone + 1] = value;
+            tombstones—;
+            size++;
+            return;
+        }
+        // 如果当前键为失效键，则标记其位置，准备在其位置放入传入的键值对
+        if (firstTombstone == -1 &amp;&amp; k == TOMBSTONE) {
+            firstTombstone = index;
+        }
+    }
+}
+</code></pre>
+
+<p>可以看到，put()方法里面的逻辑其实很简单，就是在想方设法的把传进来的键值对给存进去——其中对获得的index的值进行了一些判断，以决定如何进行存储——总之是想要尽可能的节省空间。另外，值得注意的是，在遇到相同索引处存放着同一个键的时候，其采取的方式是新值换旧值。除此之外，我们可以看到，在方法的第一行其调用了另一个方法cleanUp()，这个方法又是干嘛的呢？</p>
+
+<pre class="prettyprint"><code class="java">private void cleanUp() {
+    if (rehash()) {
+        // 如果rehash()方法返回的是true，就不需要继续clean up了
+        return;
+    }
+    //如果table的size是0的话，也不需要clean up.
+    //都没有键值在里面有什么好clean的？
+    if (size == 0) {
+        return;
+    }
+
+    // 默认的clean是0.
+    //下一次再clean的时候是从上一次clean的地方继续
+    int index = clean;
+    Object[] table = this.table;
+    for (int counter = table.length; counter &gt; 0; counter &gt;&gt;= 1,
+        index = next(index)) {
+        Object k = table[index];
+        //如果键是TOMBSTONE或者null的话，就可以下一次循环了
+        if (k == TOMBSTONE || k == null) {
+            continue;
+        }
+
+        // 这个table只有可能存储null, tombstones 和 references的键.
+        @SuppressWarnings(“unchecked”)
+        Reference&lt;ThreadLocal&lt;?&gt;&gt; reference = (Reference&lt;ThreadLocal&lt;?&gt;&gt;) k;
+        // 检查键是否已经失效，如果已经失效就把它设置为失效键，同时释放它的值
+        if (reference.get() == null) {
+            table[index] = TOMBSTONE;
+            table[index + 1] = null;
+            tombstones++;
+            size—;
+        }
+    }
+
+    // 指向下一个index
+    clean = index;
+}
+</code></pre>
+
+<p>cleanUp()方法只做了一件事，就是把失效的键放上TOMBSTONE去占位，然后释<br>
+放它的值。那么rehash()是干什么的其实已经很显而易见了： </p>
+
+<ul>
+<li>从字面意思来也知道是重新规划table的大小。</li>
+<li>联想cleanUp()的作用，它都已经把失效键放上TOMBSTONE，接下来呢？显然是想办法干掉这些TOMBSTONE，还我内存一个朗朗乾坤喽。</li>
+</ul>
+
+<p>这个方法我这里就不详尽去分析了，它的作用也确实是上面讲的那些，有了前面的那些基础，去分析这个方法是很简单的事情，有兴趣的读者可以自己去试试。</p>
+
+<h6>Object getAfterMiss(ThreadLocal&lt;?&gt;)</h6>
+
+<pre class="prettyprint"><code class="java">public T get() {
+    // 获得调用线程
+    Thread currentThread = Thread.currentThread();
+    //获得调用线程的Values
+    Values values = values(currentThread);
+    if (values != null) {
+        Object[] table = values.table;
+        int index = hash &amp; values.mask;
+        //如果在当前index处的键不是此线程的引用，就会去调用getAfterMiss()
+        if (this.reference == table[index]) {
+            return (T) table[index + 1];
+        }
+    } else {
+        values = initializeValues(currentThread);
+    }
+    return (T) values.getAfterMiss(this);
+}
+</code></pre>
+
+<p>它的作用就是在第一个位置没有找到此键对应的值的时候继续查询，达到获得其值的目的。但是在看它的代码的过程中，我整个人是懵逼的。为什么呢？按照我的想法，没有在第一个位置得到这个调用线程存储的信息之后，应该下一步是一个一个index的循环这个table，来找到调用线程存储的信息，如果实在找不到，就说明调用线程没有存储信息在里面，那么就应该初始化一个value给它——当然，这个初始化value的方法理应是可以重写的。初始化之后，就是用一种巧妙的方法把它存进table里面，然后返回这个value了。</p>
+
+<p>——可是，它的源码根本不是这样！</p>
+
+<pre><code class="language-java">Object getAfterMiss(ThreadLocal&lt;?&gt; key) {
+            Object[] table = this.table;
+            int index = key.hash &amp; mask;
+
+            // If the first slot is empty, the search is over.
+            if (table[index] == null) {
+                Object value = key.initialValue();
+
+                // If the table is still the same and the slot is still empty…
+                if (this.table == table &amp;&amp; table[index] == null) {
+                    table[index] = key.reference;
+                    table[index + 1] = value;
+                    size++;
+
+                    cleanUp();
+                    return value;
+                }
+
+                // The table changed during initialValue().
+                put(key, value);
+                return value;
+            }
+
+            // Keep track of first tombstone. That’s where we want to go back
+            // and add an entry if necessary.
+            int firstTombstone = -1;
+
+            // Continue search.
+            for (index = next(index);; index = next(index)) {
+                Object reference = table[index];
+                if (reference == key.reference) {
+                    return table[index + 1];
+                }
+
+                // If no entry was found…
+                if (reference == null) {
+                    Object value = key.initialValue();
+
+                    // If the table is still the same…
+                    if (this.table == table) {
+                        // If we passed a tombstone and that slot still
+                        // contains a tombstone…
+                        if (firstTombstone &gt; -1
+                                &amp;&amp; table[firstTombstone] == TOMBSTONE) {
+                            table[firstTombstone] = key.reference;
+                            table[firstTombstone + 1] = value;
+                            tombstones—;
+                            size++;
+
+                            // No need to clean up here. We aren’t filling
+                            // in a null slot.
+                            return value;
+                        }
+
+                        // If this slot is still empty…
+                        if (table[index] == null) {
+                            table[index] = key.reference;
+                            table[index + 1] = value;
+                            size++;
+
+                            cleanUp();
+                            return value;
+                        }
+                    }
+
+                    // The table changed during initialValue().
+                    put(key, value);
+                    return value;
+                }
+
+                if (firstTombstone == -1 &amp;&amp; reference == TOMBSTONE) {
+                    // Keep track of this tombstone so we can overwrite it.
+                    firstTombstone = index;
+                }
+            }
+        }
+</code></pre>
+
+<p><strong>我的内心是崩溃的。</strong></p>
+
+<p>看得懂里面的每一行代码，也知道它在做什么，然而并不知道它这样怎么正确返回调用线程在ThreadLocal里面存的那个值。尴尬癌都犯了。如果看到这篇博文的读者中有谁知道这是怎么回事的，还望不吝赐教，拜谢。</p>
+
+<h6>void remove(ThreadLocal&lt;?&gt;)</h6>
+
+<pre><code class="language-java">void remove(ThreadLocal&lt;?&gt; key) {
+    //先把table清理一下
+    cleanUp();
+
+    for (int index = key.hash &amp; mask;; index = next(index)) {
+        Object reference = table[index];
+        //把那个引用的用TOMBSTONE占用
+        if (reference == key.reference) {
+            // Success!
+            table[index] = TOMBSTONE;
+            table[index + 1] = null;
+            tombstones++;
+            size—;
+            return;
+        }
+
+        if (reference == null) {
+            // No entry found.
+            return;
+        }
+    }
+}
+</code></pre>
+
+<p>这个方法狠简单，就是把传进来的那个键对应的值给清理掉。</p>
+
+<h3>结语</h3>
+
+<p>分析到这里，整个ThreadLocal的源码就分析的差不多了。在这里我们简单的总结一下这个类：</p>
+
+<ul>
+<li>这个类之所以能够存储每个thread的信息，是因为它的内部有一个Values内部类，而Values中有一个Object数组。</li>
+<li>Object数组是以一种近似于map的形式来存储数据的，其中偶数位存ThreadLocal的弱引用，它的下一位存值。</li>
+<li>在寻址的时候，Values采用了一种很神奇的方式——斐波拉契散列寻址</li>
+<li>Values里面的getAfterMiss()方法让人觉得很奇怪</li>
+</ul>
+
+<p>OK，从这个类还是学到了很多，它的设计还是挺巧妙的，里面关于寻址，关于Object[]的设计，关于内存空间优化，都值得细细思索。下篇博文再见。</p>
+
+<p>什么？还差了点什么？</p>
+
+<p>有一个问题没解决？</p>
+
+<p>为什么那样寻址？</p>
+
+<p>评论区问我吧：)</p>
+
+<script type="application/javascript" src="../prism.js" ></script>
+
+</body></html>
