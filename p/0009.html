@@ -3,14 +3,9 @@
 	<title>ThreadLocal</title>
 	<meta name="generator" content="iA Writer Pro 1.5.2 (6015)">
     <link rel="stylesheet" type="text/css" href="../markdown.css">
-    <link rel="stylesheet" type="text/css" href="../prism.css">
+    <!--<link rel="stylesheet" type="text/css" href="../prism.css">-->
     <link rel="stylesheet" type="text/css" href="../prettify.css">
     <script type="application/javascript" src="../prettify.min.js"></script>
-    <style type="text/css">
-        img {
-            text-align: center;
-        }
-    </style>
 </head>
 <body onload="prettyPrint()">
 <h1>ThreadLocal</h1>
@@ -523,7 +518,7 @@ private static int nextHashCode() {
 
 <p>——可是，它的源码根本不是这样！</p>
 
-<pre><code class="language-java">Object getAfterMiss(ThreadLocal&lt;?&gt; key) {
+<pre class="prettyprint"><code class="language-java">Object getAfterMiss(ThreadLocal&lt;?&gt; key) {
             Object[] table = this.table;
             int index = key.hash &amp; mask;
 
@@ -607,7 +602,7 @@ private static int nextHashCode() {
 
 <h6>void remove(ThreadLocal&lt;?&gt;)</h6>
 
-<pre><code class="language-java">void remove(ThreadLocal&lt;?&gt; key) {
+<pre class="prettyprint"><code class="language-java">void remove(ThreadLocal&lt;?&gt; key) {
     //先把table清理一下
     cleanUp();
 
@@ -654,6 +649,6 @@ private static int nextHashCode() {
 
 <p>评论区问我吧：)</p>
 
-<script type="application/javascript" src="../prism.js" ></script>
+<!--<script style="text/javascript" src="../prism.js"></script>-->
 
 </body></html>

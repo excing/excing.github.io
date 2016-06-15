@@ -56,13 +56,13 @@ code, pre {
 }
 
 code {
-    /*border: 1px solid #EAEAEA;*/
+    border: 1px solid #EAEAEA;
     margin: 0 2px;
     padding: 0 5px;
 }
 
 pre {
-    /*border: 1px solid #CCCCCC;*/
+    border: 1px solid #EAEAEA;
     line-height: 1.25em;
     overflow: auto;
     padding: 6px 10px;
