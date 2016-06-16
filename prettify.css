@@ -40,7 +40,7 @@ code.prettyprint {
 	padding: 2px;
 	font-size: 14px;
 	display: block;
-	font-family: Consolas, "Liberation Mono", Courier, monospace, \5FAE\8F6F\96C5\9ED1;
+	/*font-family: Consolas, "Liberation Mono", Courier, monospace, \5FAE\8F6F\96C5\9ED1;*/
 	margin: 10px 0;
 	white-space: normal;
 	word-wrap: break-word;
