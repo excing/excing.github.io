@@ -5,13 +5,19 @@ body, body.mobile.two-columns {
 }
 }
 body {
-font-family: "Open Sans", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
-padding:1em;
-margin:auto;
-max-width:42em;
+font-family: "Open Sans", "inherit", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
 line-height: 1.8em;
 word-spacing: 0.2em;
-background:#f5f5d5;
+background:#ffffff;
+padding: 0;
+margin: auto;
+max-width:42em;
+}
+
+div.text {
+    max-width:42em;
+    padding:1em;
+    margin:auto;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -102,4 +108,9 @@ a, a:visited {
     color: #4183C4;
     background-color: inherit;
     text-decoration: none;
+}
+a:hover {
+    color: #4183C4;
+    background-color: inherit;
+    text-decoration: underline;
 }
