@@ -114,3 +114,10 @@ a:hover {
     background-color: inherit;
     text-decoration: underline;
 }
+
+li {
+    padding-top: 0em;
+    padding-bottom: 0em;
+    margin-top: 0;
+    margin-bottom: 0;
+}
