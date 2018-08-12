@@ -5,7 +5,7 @@
 	<title>excQ's blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content="iA Writer Pro 1.5.2 (6015)">
-    <link href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="theme-color" content="#005baa" />
     <link rel="stylesheet" type="text/css" href="./markdown.css">
 </head>
 <body>
@@ -14,14 +14,19 @@
         <h1><a id="a_main_url" style="color: #FFFFFF; font-size: 36px">ExcQ's BOLG</a></h1>
     </div>
 </div>
-<div id="blog_list" class="text"></div>
+<div id="blog_list" style="margin: 0 5%"></div>
 <script src="./http4js.js"></script>
 <script src="./urls.js"></script>
+<script src="./config.js"></script>
 <script>
     var a_main_url = document.getElementById("a_main_url");
     a_main_url.href = main_url;
 
     var pageNumber = getQueryVariable("n");
+
+    if ("" == pageNumber) {
+        pageNumber = "1";
+    }
 
     function call(data) {
         // alert("请求成功 " + data.length);
@@ -37,7 +42,7 @@
 
             if (lastTime != editTimeFormat) {
                 lastTime = editTimeFormat
-                div.innerHTML += '<li>' + editTimeFormat + '</li>';
+                div.innerHTML += '<h3>' + editTimeFormat + '</h3>';
             }
 
             div.innerHTML += '<h4><a href="view.html?id=' + item.id + '">' + item.title + '</a></h4>';

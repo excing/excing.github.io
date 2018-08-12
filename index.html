@@ -4,6 +4,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="theme-color" content="#005baa" />
+    <link rel="stylesheet" type="text/css" href="./markdown.css">
     <style type="text/css">
         html {
             height: 100%;
@@ -11,42 +13,52 @@
 
         body {
             height: 100%;
-            font-family: "Open Sans", "inherit", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
+            max-width: 100%;
             line-height: 1.8em;
             word-spacing: 0.2em;
             padding: 0;
             margin: auto;
         }
 
+        .left_style {
+            float: left;
+            max-width: 42em;
+            margin-top: 9%;
+            margin-left: 5%;
+            margin-right: 5%;
+        }
+
         .text-list-style {
             background: #FFFFFF;
             float: right;
-            margin-left: 20px;
             margin-top: 10%;
-            margin-right: 10%;
+            margin-left: 5%;
+            margin-right: 5%;
             border-radius: 4px;
-            min-width: 300px;
             max-width: 42em;
             max-height: 60%;
-            padding: 10px 30px;
+            padding: 0px 30px;
             overFlow-x:hidden;  
             overFlow-y:auto; 
         }
 
     </style>
-    <link href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-    <title>Exc的博客</title>
+
+    <title>excing的博客</title>
 </head>
 <body>
 <div style="height: 100%; background: #005fb2">
-    <div style="float: left; margin-top: 10%; margin-left: 10%">
-        <h1  style="color: #FFFFFF; font-size: 36px"><a id="a_about_me" style="color: #FFFFFF; font-size: 36px">ExcQ</a>'s BOLG</h1>
+    <div class="left_style">
+        <h1  style="color: #FFFFFF; font-size: 36px"><a id="a_about_me" style="color: #FFFFFF">ExcQ</a>'s BOLG</h1>
 
         <h3 style="color: #FFFFFF; font-size: 24px">天上有很多神仙</h3>
 
-        <input></input>
+        <div style="width: 100%">
+            <input id="input_search" class="line_input" placeholder="search or command" type="search" onsearch="onInputSearch()" autofocus style="width: 100%"></input>
+        </div>
     </div>
-    <div id="blog_list" class="text-list-style" hidden></div>
+    <div id="blog_list" class="text-list-style" hidden>
+    </div>
 </div>
 </div>
 <script src="./http4js.js"></script>
@@ -70,6 +82,23 @@
         }
 
         div.hidden = false;
+    }
+
+    var input_search = document.getElementById("input_search");
+
+    function inputSearchCallback(data) {
+        var result = JSON.parse(data);
+    }
+
+    function onInputSearch() {
+        searchText = input_search.value;
+
+        if ("" == searchText) {
+            return;
+        }
+
+        post(api_domain + "/search", {searchText: searchText}, inputSearchCallback);
+        input_search.value = "";
     }
 
     get(api_domain + "/", call);

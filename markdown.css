@@ -1,6 +1,6 @@
 @media (max-width: 30rem){
 body, body.mobile.two-columns {
-    font-size: 120%;
+    font-size: 100%;
 }
 }
 body {
@@ -10,13 +10,44 @@ word-spacing: 0.2em;
 background:#ffffff;
 padding: 0;
 margin: auto;
-max-width:42em;
+max-width:64em;
 }
 
 div.text {
-    max-width:42em;
+    max-width:64em;
     padding:1em;
     margin:auto;
+}
+
+input.line_input {
+    border: none;
+    border-bottom: 2px solid #FFFFFF;
+    display: block;
+    padding: 0px 14px 5px 0px;
+    background: 0 0;
+    text-align: left;
+    font-size: 24px;
+    color: #FFFFFF;
+}
+
+input[type=search] {
+    -webkit-appearance: textfield;
+    -webkit-box-sizing: content-box;
+}
+input::-webkit-search-decoration, input::-webkit-search-cancel-button {
+    display: none;
+}
+
+
+input.line_input:focus {
+    border: none;
+    border-bottom: 3px solid #FFFFFF;
+    outline: 0;
+}
+
+input.line_input::placeholder {
+    color: #FFFFFF;
+    opacity: 1;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -38,7 +69,7 @@ h2 {
 }
 
 h3 {
-    font-size: 18px;
+    font-size: 20px;
 }
 
 h4 {
@@ -99,7 +130,7 @@ div > code {
 
 figure {
     text-align: center;
-    max-width:42em;
+    max-width:64em;
     -webkit-margin-start: 0;
     -webkit-margin-end: 0;
 }
