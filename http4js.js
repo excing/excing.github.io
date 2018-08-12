@@ -3,18 +3,64 @@
  * javascript http get 请示工具
  */
 
-function get(url, callback) {
+function get(url, callback, error) {
+    callback = callback || function(data) {}
+    error = error || function() {}
+
     xmlHttp = createXMLHttpRequest();
     xmlHttp.open("GET", url, true);// 异步处理返回
     xmlHttp.onreadystatechange = function () {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
             var b = xmlHttp.responseText;
             callback(b);
+        } else {
+            error();
         }
     };
-    xmlHttp.setRequestHeader("Content-Type",
-        "application/x-www-form-urlencoded;");
+    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;");
     xmlHttp.send();
+}
+
+function post(url, params, callback) {
+    callback = callback || function(data) {}
+
+    xmlHttp = createXMLHttpRequest();
+    xmlHttp.open("POST", url, true);// 异步处理返回
+    xmlHttp.onreadystatechange = function () {
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+            var b = xmlHttp.responseText;
+            callback(b);
+        }
+    };
+
+    var postText = "";
+
+    for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+            postText += key + "=" + params[key] + "&";
+        }
+    }
+
+    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;");
+    xmlHttp.send(postText.substr(0, postText.length - 1));
+}
+
+function postJson(url, params, callback) {
+    callback = callback || function(data) {}
+
+    xmlHttp = createXMLHttpRequest();
+    xmlHttp.open("POST", url, true);// 异步处理返回
+    xmlHttp.onreadystatechange = function () {
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+            var b = xmlHttp.responseText;
+            callback(b);
+        }
+    };
+
+    var postText = JSON.stringify(params);
+
+    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;");
+    xmlHttp.send(postText);
 }
 
 function createXMLHttpRequest() {

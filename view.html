@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<title>excQ's blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content="iA Writer Pro 1.5.2 (6015)">
+    <!-- <link href="https://cdn.bootcss.com/prettify/r298/prettify.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/prettify/r298/run_prettify.min.js"></script> -->
+    <link href="https://cdn.bootcss.com/prism/9000.0.1/themes/prism.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./markdown.css">
+    <style>
+        div.footer {
+            margin-top: 55px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            text-align: right;
+            color: #7b8894;
+        }
+        div.footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<div style="height: 150px; background: #005fb2">
+    <div style="float: left; margin-left: 1em">
+        <h1><a id="a_main_url" style="color: #FFFFFF; font-size: 36px">ExcQ's BOLG</a></h1>
+        <code>Android</code><code>ThreadLocal</code><code>源码</code>
+    </div>
+</div>
+<div>
+    <h1 id="blog_title"></h1>
+    <div id="blog_content"></div>
+    <div class="footer">
+        <p>©MIT 2018 by Excing.</p>
+        <p>Contact me via <a href="mailto:courage.exc#google.com">mail</a>, <a href="https://github.com/excing">github</a></p>
+    </div>
+</div>
+<script src="./http4js.js"></script>
+<script src="./urls.js"></script>
+<script src="config.js"></script>
+<script src="https://cdn.bootcss.com/showdown/1.8.6/showdown.min.js"></script>
+<script src="https://cdn.bootcss.com/prism/9000.0.1/prism.min.js"></script>
+<script src="https://cdn.bootcss.com/prism/9000.0.1/components/prism-java.min.js"></script>
+<script src="https://cdn.bootcss.com/prism/9000.0.1/components/prism-go.min.js"></script>
+<script src="https://cdn.bootcss.com/prism/9000.0.1/components/prism-powershell.min.js"></script>
+<script src="https://cdn.bootcss.com/prism/9000.0.1/components/prism-python.min.js"></script>
+<script src="https://cdn.bootcss.com/prism/9000.0.1/components/prism-sql.min.js"></script>
+<script src="https://cdn.bootcss.com/prism/1.14.0/components/prism-vim.min.js"></script>
+<script>
+    var a_main_url = document.getElementById("a_main_url");
+    a_main_url.href = main_url;
+
+    var id = getQueryVariable("id");
+
+    function call(data) {
+        // alert("请求成功 " + data.length);
+        var result = JSON.parse(data);
+
+        document.title = result.title + "-ExcQ's BOLG"; 
+
+        var titleH1 = document.getElementById('blog_title');
+        titleH1.innerText = result.title;
+
+        var contentDiv = document.getElementById('blog_content');
+
+        var contentType = result.contentType;
+
+        if (contentType == "md") {
+            var converter = new showdown.Converter(),
+                text      = result.content,
+                html      = converter.makeHtml(text);
+
+            contentDiv.innerHTML = html;
+
+            Prism.highlightAll();
+        } else {
+            var newnode = document.createElement("p");
+            newnode.innerText = result.content;
+
+            contentDiv.appendChild(newnode);
+        }
+
+    }
+
+    get(api_domain + "/view/" + id, call);
+</script>
+</body>
+</html>

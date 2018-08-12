@@ -25,29 +25,54 @@
             margin-top: 10%;
             margin-right: 10%;
             border-radius: 4px;
+            min-width: 300px;
             max-width: 42em;
-            padding: 20px 50px 40px 50px;
+            max-height: 60%;
+            padding: 10px 30px;
+            overFlow-x:hidden;  
+            overFlow-y:auto; 
         }
 
     </style>
-    <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <title>Exc的博客</title>
 </head>
 <body>
 <div style="height: 100%; background: #005fb2">
     <div style="float: left; margin-top: 10%; margin-left: 10%">
-        <h1><a href="http://excq.me" style="color: #FFFFFF; font-size: 36px">ExcQ's BOLG</a></h1>
+        <h1  style="color: #FFFFFF; font-size: 36px"><a id="a_about_me" style="color: #FFFFFF; font-size: 36px">ExcQ</a>'s BOLG</h1>
 
         <h3 style="color: #FFFFFF; font-size: 24px">天上有很多神仙</h3>
+
+        <input></input>
     </div>
-    <div class="text-list-style">
-        <h4><a href="p/threadlocal-analyse">ThreadLocal简单分析</a></h4>
-        <h4><a>Android中的内存管理机制以及正确的使用方式</a></h4>
-        <h4><a>在小米4手机上VideoView缓冲时释放资源出现ANR</a></h4>
-        <h4><a>Android MediaPlayer 在部分机型上上出现ANR异常</a></h4>
-        <h4><a>Android VideoView 被销毁时的Bug</a></h4>
-    </div>
+    <div id="blog_list" class="text-list-style" hidden></div>
 </div>
 </div>
+<script src="./http4js.js"></script>
+<script src="./config.js"></script>
+<script>
+    var a_about_me = document.getElementById("a_about_me");
+    a_about_me.href = main_url + "/about.html";
+
+    function call(data) {
+        // alert("请求成功 " + data.length);
+        var result = JSON.parse(data);
+        var list = result.list
+        var div = document.getElementById('blog_list');
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            div.innerHTML += '<h4><a href="view.html?id=' + item.id + '">' + item.title + '</a></h4>';
+        }
+
+        if (list.length < parseInt(result.pageCount, 10)) {
+            div.innerHTML += '<h4><a href="list.html?n=1">更多</a></h4>';
+        }
+
+        div.hidden = false;
+    }
+
+    get(api_domain + "/", call);
+</script>
 </body>
 </html>

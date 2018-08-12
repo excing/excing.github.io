@@ -1,11 +1,10 @@
-@import url("useso-fonts-open-sans.css");
 @media (max-width: 30rem){
 body, body.mobile.two-columns {
-    font-size: 80%;
+    font-size: 120%;
 }
 }
 body {
-font-family: "Open Sans", "inherit", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
+/* font-family: "Open Sans", "inherit", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif; */
 line-height: 1.8em;
 word-spacing: 0.2em;
 background:#ffffff;
@@ -21,7 +20,11 @@ div.text {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-weight: bold;
+    /* font-weight: bold; */
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    /* opacity: 0.54; */
 }
 
 h1 {
@@ -65,21 +68,11 @@ p, blockquote, ul, ol, dl, li, table, pre {
 
 code, pre {
     border-radius: 3px;
-    background-color: #f5f2f0;
     color: inherit;
 }
 
-code {
-    border: 1px solid #EAEAEA;
-    margin: 0 2px;
-    padding: 0 5px;
-    font-family: "Open Sans", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
-    font-style: normal;
-    font-size: 0.8em;
-}
-
 pre {
-    border: 1px solid #EAEAEA;
+    border: #E3EDF3 1px solid;
     line-height: 1.4em;
     overflow: auto;
     padding: 6px 10px;
@@ -89,6 +82,19 @@ pre > code {
     border: 0;
     margin: 0;
     padding: 0;
+}
+
+div > code {
+    border: 1px solid #EAEAEA;
+    margin: 0 2px;
+    padding: 3px 5px;
+    color: #000000;
+    font-style: normal;
+    background-color: #FFFFFF;
+}
+
+:not(pre)>code[class*="language-"], pre[class*="language-"] {
+    background: #FFFFFF;
 }
 
 figure {

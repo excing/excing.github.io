@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<title>excQ's blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content="iA Writer Pro 1.5.2 (6015)">
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./markdown.css">
+</head>
+<body>
+<div style="height: 150px; background: #005fb2">
+    <div style="float: left; margin-left: 1em">
+        <h1><a id="a_main_url" style="color: #FFFFFF; font-size: 36px">ExcQ's BOLG</a></h1>
+    </div>
+</div>
+<div id="blog_list" class="text"></div>
+<script src="./http4js.js"></script>
+<script src="./urls.js"></script>
+<script>
+    var a_main_url = document.getElementById("a_main_url");
+    a_main_url.href = main_url;
+
+    var pageNumber = getQueryVariable("n");
+
+    function call(data) {
+        // alert("请求成功 " + data.length);
+        var result = JSON.parse(data);
+        var list = result.list
+        var pageCount = result.pageCount
+        var div = document.getElementById('blog_list');
+        var lastTime = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            var editTimeDate = new Date(item.editTime);
+            var editTimeFormat = editTimeDate.getFullYear() + "/" + (editTimeDate.getMonth() + 1);
+
+            if (lastTime != editTimeFormat) {
+                lastTime = editTimeFormat
+                div.innerHTML += '<li>' + editTimeFormat + '</li>';
+            }
+
+            div.innerHTML += '<h4><a href="view.html?id=' + item.id + '">' + item.title + '</a></h4>';
+        }
+
+        number = parseInt(pageNumber, 10)
+
+        if (1 < number) {
+            div.innerHTML += '<h4><a href="list.html?n=' + (number - 1) + '">上一页</a></h4>';
+        }
+
+        if (number < pageCount) {
+            div.innerHTML += '<h4><a href="list.html?n=' + (number + 1) + '">下一页</a></h4>';
+        }
+        div.hidden = false;
+    }
+
+    get(api_domain + "/list/" + pageNumber, call);
+</script>
+</body>
+</html>
