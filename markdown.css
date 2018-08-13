@@ -93,8 +93,19 @@ hr {
     background-color: #CCCCCC;
 }
 
-p, blockquote, ul, ol, dl, li, table, pre {
+p, blockquote, table, pre {
     margin: 15px 0;
+}
+
+blockquote {
+  border-left: 4px solid #DDD;
+  padding: 0 15px;
+  color: #777; 
+}
+blockquote > :first-child {
+    margin-top: 0; }
+blockquote > :last-child {
+    margin-bottom: 0; 
 }
 
 code, pre {
@@ -115,13 +126,19 @@ pre > code {
     padding: 0;
 }
 
-div > code {
-    border: 1px solid #EAEAEA;
+code {
+    border: 1px solid #DDD;
     margin: 0 2px;
     padding: 3px 5px;
-    color: #000000;
-    font-style: normal;
     background-color: #FFFFFF;
+    color: black;
+    text-shadow: 0 1px white;
+    font-family: Consolas,Monaco,'Andale Mono',monospace;
+    direction: ltr;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    hyphens: none;
 }
 
 :not(pre)>code[class*="language-"], pre[class*="language-"] {
@@ -152,9 +169,35 @@ a:hover {
     text-decoration: underline;
 }
 
+li p {
+    margin: 0;
+}
+
 li {
     padding-top: 0em;
     padding-bottom: 0em;
     margin-top: 0;
     margin-bottom: 0;
+}
+
+ul {
+    display: block;
+    margin: 1em 0;
+    list-style-type: disc;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 20px;
+}
+
+ul ul {
+    display: block;
+    margin: 0 40px 0 0;
+    list-style-type: circle;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 40px;
 }

@@ -54,7 +54,7 @@
         <h3 style="color: #FFFFFF; font-size: 24px">天上有很多神仙</h3>
 
         <div style="width: 100%">
-            <input id="input_search" class="line_input" placeholder="search or command" type="search" onsearch="onInputSearch()" autofocus style="width: 100%"></input>
+            <input id="input_search" class="line_input" placeholder="search or command" type="search" autofocus style="width: 100%"></input>
         </div>
     </div>
     <div id="blog_list" class="text-list-style" hidden>
@@ -82,23 +82,6 @@
         }
 
         div.hidden = false;
-    }
-
-    var input_search = document.getElementById("input_search");
-
-    function inputSearchCallback(data) {
-        var result = JSON.parse(data);
-    }
-
-    function onInputSearch() {
-        searchText = input_search.value;
-
-        if ("" == searchText) {
-            return;
-        }
-
-        post(api_domain + "/search", {searchText: searchText}, inputSearchCallback);
-        input_search.value = "";
     }
 
     get(api_domain + "/", call);
