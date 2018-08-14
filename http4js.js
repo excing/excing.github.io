@@ -103,11 +103,29 @@ function getQueryVariable(variable) {
 
 // 以下代码处理搜索和指令业务
 var input_search = document.getElementById("input_search");
-input_search.onsearch = onInputSearch();
-input_search.addEventListener("search", onInputSearch);
+
+if (null != input_search) {
+    input_search.onsearch = onInputSearch();
+    input_search.addEventListener("search", onInputSearch);
+}
+
+function setToken(token) {
+    Cookies.set('token', token, {expires: 3});
+}
+
+function getToken() {
+    var token = Cookies.get('token');
+    return token;
+}
+
+function onOnlineRequest(callback) {
+    var token = Cookies.get('token');
+
+    post(api_domain + '/online', {token: token}, callback);
+}
 
 function loginCallback(data) {
-    // Cookies.set('token', data, {expires: 7});
+    setToken(data);
 }
 
 function searchCallback(data) {

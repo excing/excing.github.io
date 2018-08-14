@@ -45,9 +45,24 @@ input.line_input:focus {
     outline: 0;
 }
 
+/* input ::placeholder 样式 */
 input.line_input::placeholder {
     color: #FFFFFF;
-    opacity: 1;
+}
+input.line_input::-webkit-input-placeholder {
+    color: #FFFFFF;
+}
+input.line_input::-moz-placeholder {
+    /* Mozilla Firefox 19+ */
+    color: #FFFFFF;
+}
+input.line_input:-moz-placeholder {
+    /* Mozilla Firefox 4 to 18 */
+    color: #FFFFFF;
+}
+input.line_input:-ms-input-placeholder {
+    /* Internet Explorer 10-11 */
+    color: #FFFFFF;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -200,4 +215,16 @@ ul ul {
     -webkit-margin-start: 0px;
     -webkit-margin-end: 0px;
     -webkit-padding-start: 40px;
+}
+
+/* div 左边固定宽度，右边填充 */
+.use-flex {
+    display:flex;
+}
+.use-flex>div:first-child {
+    flex:none;
+    width:100px;
+}
+.use-flex>div:last-child {
+    flex:1;
 }

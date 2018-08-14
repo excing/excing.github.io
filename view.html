@@ -26,8 +26,9 @@
 <body>
 <div style="height: 150px; background: #005fb2">
     <div style="float: left; margin-left: 1em">
-        <h1><a id="a_main_url" style="color: #FFFFFF; font-size: 36px">ExcQ's BOLG</a></h1>
+        <h1><a href="." style="color: #FFFFFF; font-size: 36px">ExcQ's BOLG</a></h1>
     </div>
+    <a id="a_edit" hidden style="color: #FFFFFF; float: right; margin: 0.67em;">编辑</a>
 </div>
 <div style="margin: 0 5%">
     <h1 id="blog_title"></h1>
@@ -49,10 +50,10 @@
 <script src="https://cdn.bootcss.com/prism/9000.0.1/components/prism-sql.min.js"></script>
 <script src="https://cdn.bootcss.com/prism/1.14.0/components/prism-vim.min.js"></script>
 <script>
-    var a_main_url = document.getElementById("a_main_url");
-    a_main_url.href = main_url;
-
     var id = getQueryVariable("id");
+
+    var a_edit = document.getElementById("a_edit");
+    a_edit.href = "edit.html?id=" + id;
 
     function call(data) {
         // alert("请求成功 " + data.length);
@@ -82,9 +83,16 @@
             contentDiv.appendChild(newnode);
         }
 
+        onOnlineRequest(onlineCallback);
     }
 
     get(api_domain + "/view/" + id, call);
+
+    function onlineCallback(data) {
+        if ("true" == data) {
+            a_edit.hidden = false;
+        }
+    }
 </script>
 </body>
 </html>
