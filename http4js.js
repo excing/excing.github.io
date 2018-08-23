@@ -139,7 +139,9 @@ function onInputSearch() {
         return;
     }
 
-    if (":lg " == searchText.substr(0, 4)) {
+    if (":i" == searchText) {
+        window.location.href="edit.html";
+    } else if (":lg " == searchText.substr(0, 4)) {
         var words = searchText.split(" ");
 
         if (3 == words.length) {

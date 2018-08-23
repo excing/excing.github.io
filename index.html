@@ -74,7 +74,7 @@
             div.innerHTML += '<h4><a href="view.html?id=' + item.id + '">' + item.title + '</a></h4>';
         }
 
-        if (list.length < parseInt(result.pageCount, 10)) {
+        if (1 < parseInt(result.pageCount, 10)) {
             div.innerHTML += '<h4><a href="list.html?n=1">更多</a></h4>';
         }
 

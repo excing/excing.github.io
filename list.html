@@ -46,13 +46,18 @@
 
         number = parseInt(pageNumber, 10)
 
+        div.innerHTML += '<div>';
+
         if (1 < number) {
-            div.innerHTML += '<h4><a href="list.html?n=' + (number - 1) + '">上一页</a></h4>';
+            div.innerHTML += '<h4 style="display: inline; margin-right: 2em"><a href="list.html?n=' + (number - 1) + '">上一页</a></h4>';
         }
 
         if (number < pageCount) {
-            div.innerHTML += '<h4><a href="list.html?n=' + (number + 1) + '">下一页</a></h4>';
+            div.innerHTML += '<h4 style="display: inline"><a href="list.html?n=' + (number + 1) + '">下一页</a></h4>';
         }
+
+        div.innerHTML += '</div>';
+
         div.hidden = false;
     }
 
