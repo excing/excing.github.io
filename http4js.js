@@ -8,6 +8,7 @@ include('https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js');
 
 function include(url) {
     var el_script = document.createElement('script');
+    el_script.async = false;
     el_script.src = url;
     document.head.appendChild(el_script);
 }
@@ -99,6 +100,38 @@ function getQueryVariable(variable) {
             if(pair[0] == variable){return pair[1];}
     }
     return("");
+}
+
+function index(token, callback) {
+    post(api_domain, {token: token}, callback);
+}
+
+function login(name, passwdMd5, callback) {
+    post(api_domain + "/login", {name: name, passwd: passwdMd5}, callback);
+}
+
+function online(token, callback) {
+    post(api_domain + '/online', {token: token}, callback);
+}
+
+function edit(blog, callback) {
+    postJson(api_domain + '/edit', blog, callback); 
+}
+
+function list(token, pageNumber, callback) {
+    post(api_domain + "/list/" + pageNumber, {token: token}, callback);
+}
+
+function view(token, blogId, callback) {
+    post(api_domain + "/view/" + blogId, {token: token}, callback);
+}
+
+function getBlogPwd(token, blogId, callback) {
+    post(api_domain + "/getBlogPwd/" + blogId, {token: token}, callback);
+}
+
+function updateBlogPwd(token, blogId, pwd, callback) {
+    post(api_domain + "/updateBlogPwd/" + blogId , {token: token, pwd: pwd}, callback);
 }
 
 // 以下代码处理搜索和指令业务
