@@ -19,6 +19,7 @@
 <div id="blog_list" style="margin: 0 5%"></div>
 <script src="./http4js.js"></script>
 <script src="./config.js"></script>
+<script src="https://cdn.bootcss.com/js-cookie/latest/js.cookie.min.js"></script>
 <script>
     var pageNumber = getQueryVariable("n");
 
@@ -63,7 +64,7 @@
         div.hidden = false;
     }
 
-    get(api_domain + "/list/" + pageNumber, call);
+    list(Cookies.get('token'), pageNumber, call);
 </script>
 </body>
 </html>

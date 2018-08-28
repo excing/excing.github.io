@@ -65,12 +65,12 @@
     var lastContent = "";
     var token = Cookies.get('token');
 
-    post(api_domain + '/online', {token: token}, onlineCallback);
+    online(token, onlineCallback);
 
     function onlineCallback(data) {
         if ("true" == data) {
             if (id != "") {
-                get(api_domain + '/view/' + id, viewCallback);
+                view(token, id, viewCallback);
             }
 
             setTimeout(saveBlog, 1000);
@@ -84,13 +84,16 @@
         // alert("请求成功 " + data.length);
         var result = JSON.parse(data);
 
-        document.title = "编辑-" + result.title + "-ExcQ's BOLG"; 
+        lastTitle = getEditTitleSrcText(result.title, result.mode);
+        lastContent = result.content;
+
+        document.title = "编辑-" + result.title + "-ExcQ's Blog"; 
 
         var titleH1 = document.getElementById('blog_title');
-        titleH1.value = result.title;
+        titleH1.value = lastTitle;
 
         var contentTextare = document.getElementById('blog_content');
-        contentTextare.value = result.content;
+        contentTextare.value = lastContent;
     }
 
     function saveBlogCallback(data) {
@@ -113,10 +116,12 @@
             var contentType = "md";
             var updateTime = new Date().getTime();
 
+            var titleAndMode = parseEditTitle(title);
+
             if (id != "") {
-                postJson(api_domain + '/edit', {id: id, title: title, content: content, contentType: contentType, channel: channel, editTime: updateTime, token: token}, saveBlogCallback); 
+                edit({id: id, title: titleAndMode.title, content: content, mode: titleAndMode.mode, contentType: contentType, channel: channel, editTime: updateTime, token: token}, saveBlogCallback);
             } else {
-                postJson(api_domain + '/edit', {title: title, content: content, contentType: contentType, channel: channel, editTime: updateTime, token: token}, saveBlogCallback); 
+                edit({title: titleAndMode.title, content: content, mode: titleAndMode.mode, contentType: contentType, channel: channel, editTime: updateTime, token: token}, saveBlogCallback);
             }
         }
 

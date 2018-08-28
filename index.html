@@ -14,6 +14,7 @@
         }
 
         body {
+            background: #005fb2;
             height: 100%;
             max-width: 100%;
             line-height: 1.8em;
@@ -34,6 +35,7 @@
             background: #FFFFFF;
             float: right;
             margin-top: 10%;
+            margin-bottom: 1em;
             margin-left: 5%;
             margin-right: 5%;
             border-radius: 4px;
@@ -46,17 +48,17 @@
 
     </style>
 
-    <title>ExcQ's BLOG</title>
+    <title>ExcQ's Blog</title>
 </head>
 <body>
-<div style="height: 100%; background: #005fb2">
+<div style="height: 100%;">
     <div class="left_style">
         <h1  style="color: #FFFFFF; font-size: 36px"><a href="./about.html" style="color: #FFFFFF">ExcQ</a>'s BOLG</h1>
 
         <h3 style="color: #FFFFFF; font-size: 24px">天上有很多神仙</h3>
 
         <div style="width: 100%">
-            <input id="input_search" class="line_input" placeholder="search or command" type="search" autofocus style="width: 100%"></input>
+            <input id="input_search" class="line_input" placeholder="search or command" type="search" autofocus style="width: 100%" />
         </div>
     </div>
     <div id="blog_list" class="text-list-style" hidden>
@@ -65,6 +67,7 @@
 </div>
 <script src="./http4js.js"></script>
 <script src="./config.js"></script>
+<script src="https://cdn.bootcss.com/js-cookie/latest/js.cookie.min.js"></script>
 <script>
     function call(data) {
         // alert("请求成功 " + data.length);
@@ -83,7 +86,10 @@
         div.hidden = false;
     }
 
-    get(api_domain + "/", call);
+    var token = Cookies.get('token');
+
+    online(token);
+    index(token, call);
 </script>
 </body>
 </html>

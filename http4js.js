@@ -134,6 +134,31 @@ function updateBlogPwd(token, blogId, pwd, callback) {
     post(api_domain + "/updateBlogPwd/" + blogId , {token: token, pwd: pwd}, callback);
 }
 
+function parseEditTitle(srcText) {
+    if (";;" == srcText.slice(-3, -1)) {
+        var mode = parseInt(srcText.substring(srcText.length - 1));
+        if (!isNaN(mode)) {
+            return {title: srcText.slice(0, -3), mode: mode};
+        }
+    }
+
+    return {title: srcText, mode: 0};
+}
+
+function getEditTitleSrcText(title, mode) {
+    var modeStr = "";
+
+    if (1 == mode) {            // 表示列表不可见
+        modeStr = ";;1";
+    } else if (2 == mode) {     // 表示内容输入口令可见
+        modeStr = ";;2";
+    } else if (3 == mode) {     // 表示不可见
+        modeStr = ";;3";
+    }
+
+    return title + modeStr;
+}
+
 // 以下代码处理搜索和指令业务
 var input_search = document.getElementById("input_search");
 
@@ -142,27 +167,8 @@ if (null != input_search) {
     input_search.addEventListener("search", onInputSearch);
 }
 
-function setToken(token) {
-    Cookies.set('token', token, {expires: 3});
-}
-
-function getToken() {
-    var token = Cookies.get('token');
-    return token;
-}
-
-function onOnlineRequest(callback) {
-    var token = Cookies.get('token');
-
-    post(api_domain + '/online', {token: token}, callback);
-}
-
 function loginCallback(data) {
-    setToken(data);
-}
-
-function searchCallback(data) {
-    var result = JSON.parse(data);
+    Cookies.set('token', token, {expires: 3});
 }
 
 function onInputSearch() {
@@ -172,7 +178,7 @@ function onInputSearch() {
         return;
     }
 
-    if (":i" == searchText) {
+    if (":n" == searchText) {
         window.location.href="edit.html";
     } else if (":lg " == searchText.substr(0, 4)) {
         var words = searchText.split(" ");
@@ -181,10 +187,8 @@ function onInputSearch() {
             name = words[1];
             passwd = words[2];
 
-            post(api_domain + "/login", {name: name, passwd: md5(passwd)}, loginCallback);
+            login(name, md5(passwd), loginCallback);
         }
-    } else {
-        post(api_domain + "/search", {searchText: searchText}, searchCallback);
     }
 
     input_search.value = "";

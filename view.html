@@ -30,7 +30,11 @@
     <div style="float: left; margin-left: 1em">
         <h1><a href="." style="color: #FFFFFF; font-size: 36px">ExcQ's BOLG</a></h1>
     </div>
-    <a id="a_edit" hidden style="color: #FFFFFF; float: right; margin: 0.67em;">编辑</a>
+
+    <div id="id_user_action" hidden style="float: right; margin: 0.67em;position: relative;">
+        <a id="a_edit" style="color: #FFFFFF; display: block;text-align: right;">编辑</a>
+        <span id="a_pwd" style="color: #FFFFFF; display: none;text-align: right;" onclick="onBlogPwd()">口令</span>
+    </div>
 </div>
 <div style="margin: 0 5%">
     <h1 id="blog_title"></h1>
@@ -50,17 +54,26 @@
 <script src="https://cdn.bootcss.com/prism/9000.0.1/components/prism-python.min.js"></script>
 <script src="https://cdn.bootcss.com/prism/9000.0.1/components/prism-sql.min.js"></script>
 <script src="https://cdn.bootcss.com/prism/1.14.0/components/prism-vim.min.js"></script>
+<script src="https://cdn.bootcss.com/js-cookie/latest/js.cookie.min.js"></script>
 <script>
     var id = getQueryVariable("id");
+    var token = Cookies.get('token');
+    var blogPwd = "0000";
+    var blogMode = 3; // 默认不可见
 
     var a_edit = document.getElementById("a_edit");
     a_edit.href = "edit.html?id=" + id;
 
+    var a_pwd = document.getElementById("a_pwd");
+
+    var id_user_action = document.getElementById("id_user_action");
+
     function call(data) {
         // alert("请求成功 " + data.length);
         var result = JSON.parse(data);
+        blogMode = result.mode;
 
-        document.title = result.title + "-ExcQ's BOLG"; 
+        document.title = result.title + "-ExcQ's BLOG"; 
 
         var titleH1 = document.getElementById('blog_title');
         titleH1.innerText = result.title;
@@ -84,14 +97,41 @@
             contentDiv.appendChild(newnode);
         }
 
-        onOnlineRequest(onlineCallback);
+        online(token, onlineCallback);
     }
 
-    get(api_domain + "/view/" + id, call);
+    view(token, id, call);
 
     function onlineCallback(data) {
         if ("true" == data) {
             a_edit.hidden = false;
+            id_user_action.hidden = false;
+        }
+
+        if (2 == blogMode) {
+            if ("true" == data) {
+                a_pwd.style.display = "block";
+            } else {
+                // 显示输入口令界面
+            }
+        }
+    }
+
+    function onShowBlogPwdCallback(data) {
+        blogPwd = data;
+
+        if ("" == blogPwd) {
+            a_pwd.style.display = "none";
+        } else {
+            a_pwd.innerText = data;
+        }
+    }
+
+    function onBlogPwd() {
+        if ("0000" == blogPwd) {
+            getBlogPwd(token, id, onShowBlogPwdCallback);
+        } else if ("" != blogPwd) {
+            // 修改密码
         }
     }
 </script>
