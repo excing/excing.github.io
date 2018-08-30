@@ -228,3 +228,7 @@ ul ul {
 .use-flex>div:last-child {
     flex:1;
 }
+
+.input_pwd {
+    margin: 20px 0 auto;padding: 5px;font: 20px arial,sans-serif;width: 200px;border-radius: 5px;border: 1px solid #DDD;
+}

@@ -33,12 +33,13 @@
 
     <div id="id_user_action" hidden style="float: right; margin: 0.67em;position: relative;">
         <a id="a_edit" style="color: #FFFFFF; display: block;text-align: right;">编辑</a>
-        <span id="a_pwd" style="color: #FFFFFF; display: none;text-align: right;" onclick="onBlogPwd()">口令</span>
+        <div id="a_pwd" style="color: #FFFFFF; display: none;text-align: right;" onclick="onBlogPwd()">口令</div>
     </div>
 </div>
 <div style="margin: 0 5%">
     <h1 id="blog_title"></h1>
     <div id="blog_content"></div>
+    <blockquote id="blog_tip"></blockquote>
     <div class="footer">
         <p>©MIT 2018 by Excing.</p>
         <p>Contact me via <a href="mailto:courage.exc#google.com">mail</a>, <a href="https://github.com/excing">github</a></p>
@@ -68,34 +69,58 @@
 
     var id_user_action = document.getElementById("id_user_action");
 
-    function call(data) {
+    function viewCallback(data) {
         // alert("请求成功 " + data.length);
         var result = JSON.parse(data);
         blogMode = result.mode;
 
-        document.title = result.title + "-ExcQ's BLOG"; 
+        var title = result.title;
 
-        var titleH1 = document.getElementById('blog_title');
-        titleH1.innerText = result.title;
+        if (!(title === undefined)) {
+            document.title = result.title + "-ExcQ's BLOG"; 
 
-        var contentDiv = document.getElementById('blog_content');
+            var titleH1 = document.getElementById('blog_title');
+            titleH1.innerText = title;
+        }
 
         var contentType = result.contentType;
 
-        if (contentType == "md") {
-            var converter = new showdown.Converter({disableForced4SpacesIndentedSublists: 'true', tasklists: 'true'}),
-                text      = result.content,
-                html      = converter.makeHtml(text);
+        if (!(contentType === undefined)) {
+            var contentDiv = document.getElementById('blog_content');
 
-            contentDiv.innerHTML = html;
+            if (contentType == "md") {
+                var converter = new showdown.Converter({disableForced4SpacesIndentedSublists: 'true', tasklists: 'true'}),
+                    text      = result.content,
+                    html      = converter.makeHtml(text);
 
-            Prism.highlightAll();
-        } else {
-            var newnode = document.createElement("p");
-            newnode.innerText = result.content;
+                contentDiv.innerHTML = html;
 
-            contentDiv.appendChild(newnode);
+                Prism.highlightAll();
+            } else {
+                var newnode = document.createElement("p");
+                newnode.innerText = result.content;
+
+                contentDiv.appendChild(newnode);
+            }
+
+            var tipDiv = document.getElementById('blog_tip');
+
+            var editDateString = getYYYYMMDD(result.editTime);
+            var createDateString = getYYYYMMDD(result.createTime);
+
+            var editElement = document.createElement('p');
+            editElement.innerText = "最后一次修改于：" + editDateString;
+
+            var createElement = document.createElement('p');
+            createElement.innerText = "创建于：" + createDateString;
+
+            tipDiv.appendChild(createElement);
+            tipDiv.appendChild(editElement);
         }
+    }
+
+    function call(data) {
+        viewCallback(data);
 
         online(token, onlineCallback);
     }
@@ -106,15 +131,49 @@
         if ("true" == data) {
             a_edit.hidden = false;
             id_user_action.hidden = false;
-        }
 
-        if (2 == blogMode) {
-            if ("true" == data) {
+            if (2 == blogMode) {
                 a_pwd.style.display = "block";
-            } else {
+            }
+        } else {
+            if (2 == blogMode || 3 == blogMode) {
                 // 显示输入口令界面
+                var contentDiv = document.getElementById('blog_content');
+
+                var temp;
+
+                 if (2 == blogMode) {
+                    temp = '<div style="width:auto;position: relative;"><div style="text-align: center; margin: 10% auto;">'
+                        + '<img src="./lock-icon.png" style="display: block;"></img><input id="id_pwd" class="input_pwd" autocomplete="off" autofocus placeholder="口令" type="search"></input>'
+                        + '</div></div>';
+                 } else {
+                    temp = '<div style="width:auto;position: relative;"><div style="text-align: center; margin: 10% auto;">'
+                        + '<img src="./lock-icon.png" style="display: block;"></img>'
+                        + '</div></div>';
+                 }
+
+                contentDiv.innerHTML = temp;
+
+                var id_pwd = document.getElementById("id_pwd");
+
+                if (null != id_pwd) {
+                    id_pwd.onsearch = onInputPwd();
+                    id_pwd.addEventListener("search", onInputPwd);
+                }
             }
         }
+    }
+
+    function onInputPwd() {
+        var id_pwd = document.getElementById("id_pwd");
+        var pwdText = id_pwd.value;
+
+        if ("" == pwdText) {
+            return;
+        }
+
+        viewByPwd(pwdText, id, viewCallback);
+        id_pwd.value = "";
     }
 
     function onShowBlogPwdCallback(data) {
@@ -132,6 +191,20 @@
             getBlogPwd(token, id, onShowBlogPwdCallback);
         } else if ("" != blogPwd) {
             // 修改密码
+            a_pwd.contentEditable = true;
+        }
+    }
+
+    a_pwd.onkeyup = function(e) {
+        var key = e.keyCode ? e.keyCode : e.which;
+
+        if (13 == key) {
+            var newPwd = a_pwd.innerText.slice(0, -2);
+
+            updateBlogPwd(token, id, newPwd);
+
+            a_pwd.innerText = newPwd;
+            a_pwd.contentEditable = false;
         }
     }
 </script>

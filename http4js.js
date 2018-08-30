@@ -3,8 +3,13 @@
  * javascript http get 请示工具
  */
 
-include('https://cdn.bootcss.com/js-cookie/latest/js.cookie.min.js');
 include('https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js');
+
+function getYYYYMMDD(time) {
+    var d = new Date(time);
+    var yyyymmdd = d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + (d.getDate()) + '日';
+    return yyyymmdd;
+}
 
 function include(url) {
     var el_script = document.createElement('script');
@@ -107,31 +112,39 @@ function index(token, callback) {
 }
 
 function login(name, passwdMd5, callback) {
-    post(api_domain + "/login", {name: name, passwd: passwdMd5}, callback);
+    post(api_domain + "login", {name: name, passwd: passwdMd5}, callback);
+}
+
+function logout(token, callback) {
+    post(api_domain + 'logout', {token: token}, callback);
 }
 
 function online(token, callback) {
-    post(api_domain + '/online', {token: token}, callback);
+    post(api_domain + 'online', {token: token}, callback);
 }
 
 function edit(blog, callback) {
-    postJson(api_domain + '/edit', blog, callback); 
+    postJson(api_domain + 'edit', blog, callback); 
 }
 
 function list(token, pageNumber, callback) {
-    post(api_domain + "/list/" + pageNumber, {token: token}, callback);
+    post(api_domain + "list/" + pageNumber, {token: token}, callback);
 }
 
 function view(token, blogId, callback) {
-    post(api_domain + "/view/" + blogId, {token: token}, callback);
+    post(api_domain + "view/" + blogId, {token: token}, callback);
+}
+
+function viewByPwd(pwd, blogId, callback) {
+    post(api_domain + "view/" + blogId, {pwd: md5(pwd)}, callback);
 }
 
 function getBlogPwd(token, blogId, callback) {
-    post(api_domain + "/getBlogPwd/" + blogId, {token: token}, callback);
+    post(api_domain + "getBlogPwd/" + blogId, {token: token}, callback);
 }
 
 function updateBlogPwd(token, blogId, pwd, callback) {
-    post(api_domain + "/updateBlogPwd/" + blogId , {token: token, pwd: pwd}, callback);
+    post(api_domain + "updateBlogPwd/" + blogId , {token: token, pwd: pwd}, callback);
 }
 
 function parseEditTitle(srcText) {
@@ -168,7 +181,10 @@ if (null != input_search) {
 }
 
 function loginCallback(data) {
-    Cookies.set('token', token, {expires: 3});
+    Cookies.set('token', data, {expires: 3});
+}
+
+function logoutCallback(data) {
 }
 
 function onInputSearch() {
@@ -180,6 +196,9 @@ function onInputSearch() {
 
     if (":n" == searchText) {
         window.location.href="edit.html";
+    } else if (":q" == searchText) {
+        logout(Cookies.get('token'), logoutCallback);
+        Cookies.set('token', "");
     } else if (":lg " == searchText.substr(0, 4)) {
         var words = searchText.split(" ");
 
