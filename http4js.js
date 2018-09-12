@@ -167,6 +167,8 @@ function getEditTitleSrcText(title, mode) {
         modeStr = ";;2";
     } else if (3 == mode) {     // 表示不可见
         modeStr = ";;3";
+    } else if (4 == mode) {     // 表示列表不可见，输入口令可见
+        modeStr = ";;4";
     }
 
     return title + modeStr;

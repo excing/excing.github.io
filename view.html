@@ -132,17 +132,17 @@
             a_edit.hidden = false;
             id_user_action.hidden = false;
 
-            if (2 == blogMode) {
+            if (2 == blogMode || 4 == blogMode) {
                 a_pwd.style.display = "block";
             }
         } else {
-            if (2 == blogMode || 3 == blogMode) {
+            if (2 == blogMode || 3 == blogMode || 4 == blogMode) {
                 // 显示输入口令界面
                 var contentDiv = document.getElementById('blog_content');
 
                 var temp;
 
-                 if (2 == blogMode) {
+                 if (2 == blogMode || 4 == blogMode) {
                     temp = '<div style="width:auto;position: relative;"><div style="text-align: center; margin: 10% auto;">'
                         + '<img src="./lock-icon.png" style="display: block;"></img><input id="id_pwd" class="input_pwd" autocomplete="off" autofocus placeholder="口令" type="search"></input>'
                         + '</div></div>';
