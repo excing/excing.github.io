@@ -89,7 +89,7 @@
             var contentDiv = document.getElementById('blog_content');
 
             if (contentType == "md") {
-                var converter = new showdown.Converter({disableForced4SpacesIndentedSublists: 'true', tasklists: 'true', tables: 'true'}}),
+                var converter = new showdown.Converter({disableForced4SpacesIndentedSublists: 'true', tasklists: 'true', tables: 'true'}),
                     text      = result.content,
                     html      = converter.makeHtml(text);
 
