@@ -82,12 +82,21 @@
             var contentDiv = document.getElementById('blog_content');
 
             if (contentType == "md") {
+
+                // markdown to transform Html
                 var converter = new showdown.Converter({disableForced4SpacesIndentedSublists: 'true', tasklists: 'true', tables: 'true'}),
                     text      = result.content,
                     html      = converter.makeHtml(text);
 
                 contentDiv.innerHTML = html;
 
+                // load MathJax and LaTeX (TeX, MathML, AsciiMath) text transform to Html element
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML";
+                document.getElementsByTagName("head")[0].appendChild(script);
+
+                // highlight code
                 Prism.highlightAll();
             } else {
                 var newnode = document.createElement("p");
@@ -200,6 +209,32 @@
             a_pwd.contentEditable = false;
         }
     }
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
 </script>
 </body>
 </html>

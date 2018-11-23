@@ -108,7 +108,7 @@ hr {
     background-color: #CCCCCC;
 }
 
-p, blockquote, table, pre {
+p, blockquote, pre {
     margin: 15px 0;
 }
 
@@ -215,6 +215,58 @@ ul ul {
     -webkit-margin-start: 0px;
     -webkit-margin-end: 0px;
     -webkit-padding-start: 40px;
+}
+
+table {
+	background: #fff;
+	border: solid 1px #ddd;
+	margin-bottom: 1.25rem;
+	table-layout: auto
+}
+
+table caption {
+	background: transparent;
+	color: #222;
+	font-size: 1rem;
+	font-weight: bold
+}
+
+table thead {
+	background: #F5F5F5
+}
+
+table thead tr th,table thead tr td {
+	color: #222;
+	font-size: 0.875rem;
+	font-weight: bold;
+	padding: 0.5rem 0.625rem 0.625rem
+}
+
+table tfoot {
+	background: #F5F5F5
+}
+
+table tfoot tr th,table tfoot tr td {
+	color: #222;
+	font-size: 0.875rem;
+	font-weight: bold;
+	padding: 0.5rem 0.625rem 0.625rem
+}
+
+table tr th,table tr td {
+	color: #222;
+	font-size: 0.875rem;
+	padding: 0.5625rem 0.625rem;
+	text-align: left
+}
+
+table tr.even,table tr.alt,table tr:nth-of-type(even) {
+	background: #F9F9F9
+}
+
+table thead tr th,table tfoot tr th,table tfoot tr td,table tbody tr th,table tbody tr td,table tr td {
+	display: table-cell;
+	line-height: 1.125rem
 }
 
 /* div 左边固定宽度，右边填充 */
