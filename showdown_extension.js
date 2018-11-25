@@ -26,7 +26,7 @@
 function mdToHtml(container, md, mathJaxCDN='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_CHTML&latest') {
 
   // markdown to transform Html
-  var converter = new showdown.Converter({disableForced4SpacesIndentedSublists: 'true', tasklists: 'true', tables: 'true', extensions: ['mathjax', 'uml']}),
+  var converter = new showdown.Converter({disableForced4SpacesIndentedSublists: 'true', tasklists: 'true', tables: 'true', extensions: ['mathjax', 'diagrams']}),
       html      = converter.makeHtml(md);
 
   container.innerHTML = html;
@@ -134,7 +134,7 @@ function mdToHtml(container, md, mathJaxCDN='https://cdnjs.cloudflare.com/ajax/l
 
       {
         type:    'lang',
-        regex:   '~D(.+?)~D',
+        regex:   '~D([^`\\f\+n\\r]+?)~D',
         replace: function (match, leadingSlash, codeblock) {
           // Check if we matched the leading \ and return nothing changed if so
           if (leadingSlash === '\\') {
@@ -166,7 +166,7 @@ function mdToHtml(container, md, mathJaxCDN='https://cdnjs.cloudflare.com/ajax/l
   var diagramFlowBlocks = [];
 
   // LaTeX: $$
-  showdown.extension('uml', function () {
+  showdown.extension('diagrams', function () {
     return [
       {
         type:    'lang',
