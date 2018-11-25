@@ -269,6 +269,15 @@ table thead tr th,table tfoot tr th,table tfoot tr td,table tbody tr th,table tb
 	line-height: 1.125rem
 }
 
+.has-jax, .diagram {
+    overflow-x: scroll;
+}
+
+ /* for Chrome */
+.has-jax::-webkit-scrollbar, .diagram::-webkit-scrollbar{
+    display: none;
+}
+
 /* div 左边固定宽度，右边填充 */
 .use-flex {
     display:flex;

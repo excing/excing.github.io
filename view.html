@@ -4,12 +4,9 @@
 	<meta charset="UTF-8">
 	<title>ExcQ's Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="generator" content="iA Writer Pro 1.5.2 (6015)">
     <link rel="icon" href="./favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
     <meta name="theme-color" content="#005baa" />
-    <!-- <link href="https://cdn.bootcss.com/prettify/r298/prettify.min.css" rel="stylesheet">
-    <script src="https://cdn.bootcss.com/prettify/r298/run_prettify.min.js"></script> -->
     <link href="https://cdn.jsdelivr.net/npm/prismjs@9000.0.1/themes/prism.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="./markdown.css">
     <style>
@@ -46,9 +43,12 @@
     </div>
 </div>
 <script src="./http4js.js"></script>
-<script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/showdown@1.5.0/dist/showdown.min.js"></script>
+<script src="./config.js"></script>
 <script src="https://cdn.jsdelivr.net/combine/npm/prismjs@9000.0.1,npm/prismjs@9000.0.1/components/prism-java.min.js,npm/prismjs@9000.0.1/components/prism-javascript.min.js,npm/prismjs@9000.0.1/components/prism-go.min.js,npm/prismjs@9000.0.1/components/prism-powershell.min.js,npm/prismjs@9000.0.1/components/prism-python.min.js,npm/prismjs@9000.0.1/components/prism-sql.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/showdown@1.5.0,npm/raphael@2.2.7,npm/underscore@1.9.1,npm/js-sequence-diagrams@1000000.0.6"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.11.3/flowchart.min.js"></script>
+<script src="./showdown_extension.js"></script>
+
 <script>
     var id = getQueryVariable("id");
     var token = Cookies.get('token');
@@ -82,22 +82,7 @@
             var contentDiv = document.getElementById('blog_content');
 
             if (contentType == "md") {
-
-                // markdown to transform Html
-                var converter = new showdown.Converter({disableForced4SpacesIndentedSublists: 'true', tasklists: 'true', tables: 'true'}),
-                    text      = result.content,
-                    html      = converter.makeHtml(text);
-
-                contentDiv.innerHTML = html;
-
-                // load MathJax and LaTeX (TeX, MathML, AsciiMath) text transform to Html element
-                var script = document.createElement("script");
-                script.type = "text/javascript";
-                script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML";
-                document.getElementsByTagName("head")[0].appendChild(script);
-
-                // highlight code
-                Prism.highlightAll();
+                mdToHtml(contentDiv, result.content);
             } else {
                 var newnode = document.createElement("p");
                 newnode.innerText = result.content;
