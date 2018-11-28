@@ -1,6 +1,10 @@
 # excing.github.io
 It is the excing's blog
 
+前后端分离, mysql 作为数据存储服务.
+
+后台项目: [BlogZoneServer](https://github.com/excing/BlogZoneServer)
+
 ### 项目结构
 
 - index.html: 首页
@@ -30,6 +34,7 @@ It is the excing's blog
 
 ### 修改历史
 
+- 2018.11 支持显示目录的 markdown 标记 `[TOC]`; 支持显示视频的 markdown 标记; 修改了 markdown css, 使之与 prism 的代码样式一致; 全部使用 `JsDelivr CDN`.
 - 2018.11 支持 `时序图`、`流程图` 编辑和显示，完善 `数学公式` 编辑和显示功能
 - 2018.11 支持数学公式编辑和显示，美化表格样式
 - 2018.8 支持代码高亮

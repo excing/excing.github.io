@@ -46,8 +46,9 @@
 <script src="./config.js"></script>
 <script src="https://cdn.jsdelivr.net/combine/npm/prismjs@9000.0.1,npm/prismjs@9000.0.1/components/prism-java.min.js,npm/prismjs@9000.0.1/components/prism-javascript.min.js,npm/prismjs@9000.0.1/components/prism-go.min.js,npm/prismjs@9000.0.1/components/prism-powershell.min.js,npm/prismjs@9000.0.1/components/prism-python.min.js,npm/prismjs@9000.0.1/components/prism-sql.min.js" ></script>
 <script src="https://cdn.jsdelivr.net/combine/npm/showdown@1.5.0,npm/raphael@2.2.7,npm/underscore@1.9.1,npm/js-sequence-diagrams@1000000.0.6"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.11.3/flowchart.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/excing/showdown-extensions/showdoan-full-extensions.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/adrai/flowchart.js@v1.11.3/release/flowchart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/excing/showdown-extensions@v1.1.0/showdown-full-extensions.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/excing/showdown-extensions@v1.1.0/inner-markdown.js"></script>
 
 <script>
     var id = getQueryVariable("id");
@@ -82,7 +83,11 @@
             var contentDiv = document.getElementById('blog_content');
 
             if (contentType == "md") {
-                markdownToHtml(contentDiv, result.content);
+                try {
+                    innerMarkdownToContainer(contentDiv, result.content, ['mathjax', 'diagrams', 'video', 'catalog']);
+                } catch {
+                    contentDiv.innerText = result.content;
+                }
             } else {
                 var newnode = document.createElement("p");
                 newnode.innerText = result.content;

@@ -13,6 +13,8 @@ margin: auto;
 max-width:64em;
 }
 
+/* 页面 css */
+
 div.text {
     max-width:64em;
     padding:1em;
@@ -65,40 +67,52 @@ input.line_input:-ms-input-placeholder {
     color: #FFFFFF;
 }
 
+.input_pwd {
+    margin: 20px 0 auto;padding: 5px;font: 20px arial,sans-serif;width: 200px;border-radius: 5px;border: 1px solid #DDD;
+}
+
+/* div 左边固定宽度，右边填充 */
+.use-flex {
+    display:flex;
+}
+.use-flex>div:first-child {
+    flex:none;
+    width:100px;
+}
+.use-flex>div:last-child {
+    flex:1;
+}
+
+/*
+markdown css (全局使用)
+
+code 部分是 prismjs style
+table 部分是 showdown demo style
+*/
+
 h1, h2, h3, h4, h5, h6 {
-    /* font-weight: bold; */
+    margin-top: 24px;
+    margin-bottom: 16px;
     font-weight: 800;
-    line-height: 1.35;
-    letter-spacing: -0.02em;
-    /* opacity: 0.54; */
+    line-height: 1.25;
 }
 
 h1 {
-    color: #000000;
-    font-size: 28px;
+    padding-bottom: 0.3em;
+    font-size: 2em;
 }
 
 h2 {
-    color: #000000;
-    font-size: 24px;
+    padding-bottom: 0.3em;
+    font-size: 1.5em;
 }
 
 h3 {
-    font-size: 20px;
+    font-size: 1.25em;
 }
 
 h4 {
-    font-size: 16px;
-}
-
-h5 {
-    font-size: 14px;
-}
-
-h6 {
-    color: #777777;
-    background-color: inherit;
-    font-size: 14px;
+    font-size: 1em;
 }
 
 hr {
@@ -108,7 +122,7 @@ hr {
     background-color: #CCCCCC;
 }
 
-p, blockquote, pre {
+p, blockquote {
     margin: 15px 0;
 }
 
@@ -123,41 +137,39 @@ blockquote > :last-child {
     margin-bottom: 0; 
 }
 
-code, pre {
-    border-radius: 3px;
-    color: inherit;
+:not(pre) > code {
+    padding: .1em;
+    border-radius: .3em;
+    white-space: normal;
+}
+
+:not(pre)>code, pre {
+    background-color: #f5f2f0;
 }
 
 pre {
-    border: #E3EDF3 1px solid;
-    line-height: 1.4em;
+    padding: 1em;
+    margin: .5em 0;
     overflow: auto;
-    padding: 6px 10px;
 }
 
-pre > code {
-    border: 0;
-    margin: 0;
-    padding: 0;
-}
-
-code {
-    border: 1px solid #DDD;
-    margin: 0 2px;
-    padding: 3px 5px;
-    background-color: #FFFFFF;
-    color: black;
-    text-shadow: 0 1px white;
+code, pre {
+    color: #000;
+    text-shadow: 0 1px #fff;
     font-family: Consolas,Monaco,'Andale Mono',monospace;
     direction: ltr;
+    text-align: left;
     white-space: pre;
     word-spacing: normal;
     word-break: normal;
+    line-height: 1.5;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
     hyphens: none;
-}
-
-:not(pre)>code[class*="language-"], pre[class*="language-"] {
-    background: #FFFFFF;
 }
 
 figure {
@@ -188,7 +200,26 @@ li p {
     margin: 0;
 }
 
-li {
+/* 目录样式 */
+.cat ul {
+    list-style-type: none;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 0px;
+}
+
+.cat ul ul {
+    list-style-type: none;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 40px;
+}
+
+.cat li, li {
     padding-top: 0em;
     padding-bottom: 0em;
     margin-top: 0;
@@ -203,7 +234,6 @@ ul {
     -webkit-margin-after: 1em;
     -webkit-margin-start: 0px;
     -webkit-margin-end: 0px;
-    -webkit-padding-start: 20px;
 }
 
 ul ul {
@@ -214,7 +244,6 @@ ul ul {
     -webkit-margin-after: 0em;
     -webkit-margin-start: 0px;
     -webkit-margin-end: 0px;
-    -webkit-padding-start: 40px;
 }
 
 table {
@@ -269,6 +298,7 @@ table thead tr th,table tfoot tr th,table tfoot tr td,table tbody tr th,table tb
 	line-height: 1.125rem
 }
 
+/* .has-jax 是 Mathjax 公式样式 */
 .has-jax, .diagram {
     overflow-x: scroll;
 }
@@ -276,20 +306,4 @@ table thead tr th,table tfoot tr th,table tfoot tr td,table tbody tr th,table tb
  /* for Chrome */
 .has-jax::-webkit-scrollbar, .diagram::-webkit-scrollbar{
     display: none;
-}
-
-/* div 左边固定宽度，右边填充 */
-.use-flex {
-    display:flex;
-}
-.use-flex>div:first-child {
-    flex:none;
-    width:100px;
-}
-.use-flex>div:last-child {
-    flex:1;
-}
-
-.input_pwd {
-    margin: 20px 0 auto;padding: 5px;font: 20px arial,sans-serif;width: 200px;border-radius: 5px;border: 1px solid #DDD;
 }
