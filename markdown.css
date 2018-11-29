@@ -7,7 +7,7 @@ video, audio {
 }
 }
 body {
-font-family: "Open Sans", "inherit", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
+font-family: "Roboto", sans-serif, "inherit", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei";
 line-height: 1.8em;
 word-spacing: 0.2em;
 background:#ffffff;
