@@ -2,6 +2,9 @@
 body, body.mobile.two-columns {
     font-size: 100%;
 }
+video, audio {
+    width: 100%;
+}
 }
 body {
 /* font-family: "Open Sans", "inherit", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif; */
@@ -88,6 +91,7 @@ markdown css (全局使用)
 
 code 部分是 prismjs style
 table 部分是 showdown demo style
+anchor 部分是 GitHub style
 */
 
 h1, h2, h3, h4, h5, h6 {
@@ -113,6 +117,25 @@ h3 {
 
 h4 {
     font-size: 1em;
+}
+h1:hover .octicon, h2:hover .octicon, h3:hover .octicon, h4:hover .octicon, h5:hover .octicon, h6:hover .octicon {
+    visibility: visible;
+}
+.anchor {
+    float: left;
+    line-height: 1;
+    margin-left: -20px;
+    padding-right: 4px;
+}
+.anchor:focus .octicon {
+    visibility: visible;
+}
+.octicon {
+    display: inline-block;
+    fill: currentColor;
+    color: #1b1f23;
+    vertical-align: middle;
+    visibility: hidden;
 }
 
 hr {
