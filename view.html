@@ -85,8 +85,8 @@
             if (contentType == "md") {
                 try {
                     innerMarkdownToContainer(contentDiv, result.content, ['mathjax', 'diagrams', 'video', 'audio', 'catalog', 'anchor']);
-                } catch {
-                    contentDiv.innerText = result.content;
+                } catch (exception_var_1) {
+                    contentDiv.innerText = exception_var_1 + '<p></p>' + result.content;
                 }
             } else {
                 var newnode = document.createElement("p");
