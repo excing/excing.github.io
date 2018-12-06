@@ -37,6 +37,7 @@ Markdown live - <span id="recommendation">Based on showdown, support flowcharts,
         border-color: #ccc;
         box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
         color: rgba(0,0,0,0.75);
+        font-size: 125%;
         height: 100%;
         width: 45%;
         display: block;
@@ -48,11 +49,17 @@ Markdown live - <span id="recommendation">Based on showdown, support flowcharts,
 
 项目 Sample 地址：[showdown extensions sample](https://excq.me/sample/showdown_extensions_sample.html)
 
+项目演示地址：[Markdown Live](https://excq.me/sample/markdown_live.html)
+
 - 支持音频 markdown 文本标记；支持生成 html 时添加目录锚点
 - 支持显示目录的 markdown 标记 [TOC]; 支持显示视频的 markdown 标记
 - 支持 时序图、流程图 编辑和显示，完善 数学公式 编辑和显示功能
 - 支持数学公式编辑和显示，美化表格样式
 - 使用 showdown 作为 markdown 的 html 代码生成器
+
+目录
+
+[TOC]
 
 ### 流程图 (Flowchart)
 
@@ -132,7 +139,7 @@ $$
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_CHTML&latest"></script>
 
-<script src="https://cdn.jsdelivr.net/gh/excing/showdown-extensions@v1.2.0/showdown-full-extensions.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/excing/showdown-extensions@v1.2.2/showdown-full-extensions.js"></script>
 
 <script>
 var converter = new showdown.Converter({

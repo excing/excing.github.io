@@ -20,6 +20,11 @@
         div.footer p {
             margin: 0;
         }
+        div.footer .material-icons {
+            fill: currentColor;
+            color: #7b8894;
+            line-height: 1em;
+        }
     </style>
 </head>
 <body>
@@ -38,6 +43,7 @@
     <div id="blog_content"></div>
     <blockquote id="blog_tip"></blockquote>
     <div class="footer">
+        <a href="javascript:scroll(0,0)" class="devsite-back-to-top-link material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg></a>
         <p>©MIT 2018 by Excing.</p>
         <p>Contact me via <a href="mailto:courage.exc#google.com">mail</a>, <a href="https://github.com/excing">github</a></p>
     </div>
@@ -47,8 +53,8 @@
 <script src="https://cdn.jsdelivr.net/combine/npm/prismjs@9000.0.1,npm/prismjs@9000.0.1/components/prism-java.min.js,npm/prismjs@9000.0.1/components/prism-javascript.min.js,npm/prismjs@9000.0.1/components/prism-go.min.js,npm/prismjs@9000.0.1/components/prism-powershell.min.js,npm/prismjs@9000.0.1/components/prism-python.min.js,npm/prismjs@9000.0.1/components/prism-sql.min.js" ></script>
 <script src="https://cdn.jsdelivr.net/combine/npm/showdown@1.5.0,npm/raphael@2.2.7,npm/underscore@1.9.1,npm/js-sequence-diagrams@1000000.0.6"></script>
 <script src="https://cdn.jsdelivr.net/gh/adrai/flowchart.js@v1.11.3/release/flowchart.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/excing/showdown-extensions@v1.2.0/showdown-full-extensions.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/excing/showdown-extensions@v1.2.0/inner-markdown.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/excing/showdown-extensions@v1.2.2/showdown-full-extensions.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/excing/showdown-extensions@v1.2.2/inner-markdown.js"></script>
 
 <script>
     var id = getQueryVariable("id");
