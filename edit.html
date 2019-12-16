@@ -63,6 +63,7 @@
     var lastTitle = "";
     var lastContent = "";
     var token = Cookies.get('token');
+    var postFinish = true;
 
     online(token, onlineCallback);
 
@@ -96,6 +97,8 @@
     }
 
     function saveBlogCallback(data) {
+        postFinish = true
+
         if ("false" == data) {
             alert("非博主无法编辑文章");
         } else {
@@ -107,7 +110,7 @@
         var title = document.getElementById("blog_title").value;
         var content = document.getElementById("blog_content").value;
 
-        if (lastTitle != title || lastContent != content) {
+        if (postFinish && (lastTitle != title || lastContent != content)) {
             lastTitle = title;
             lastContent = content;
 
@@ -116,6 +119,8 @@
             var updateTime = new Date().getTime();
 
             var titleAndMode = parseEditTitle(title);
+
+            postFinish = false
 
             if (id != "") {
                 edit({id: id, title: titleAndMode.title, content: content, mode: titleAndMode.mode, contentType: contentType, channel: channel, editTime: updateTime, token: token}, saveBlogCallback);
