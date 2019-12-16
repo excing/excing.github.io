@@ -129,6 +129,10 @@ function list(token, pageNumber, callback) {
     post(api_domain + "list/" + pageNumber, {token: token}, callback);
 }
 
+function del(token, blogId, callback) {
+    post(api_domain + "delete/" + blogId, {token: token}, callback);
+}
+
 function view(token, blogId, callback) {
     post(api_domain + "view/" + blogId, {token: token}, callback);
 }
