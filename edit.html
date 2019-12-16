@@ -106,6 +106,10 @@
         }
     }
 
+    function saveBlogOntimeout() {
+        postFinish = true
+    }
+
     function saveBlog() {
         var title = document.getElementById("blog_title").value;
         var content = document.getElementById("blog_content").value;
@@ -123,9 +127,9 @@
             postFinish = false
 
             if (id != "") {
-                edit({id: id, title: titleAndMode.title, content: content, mode: titleAndMode.mode, contentType: contentType, channel: channel, editTime: updateTime, token: token}, saveBlogCallback);
+                edit({id: id, title: titleAndMode.title, content: content, mode: titleAndMode.mode, contentType: contentType, channel: channel, editTime: updateTime, token: token}, saveBlogCallback, saveBlogOntimeout);
             } else {
-                edit({title: titleAndMode.title, content: content, mode: titleAndMode.mode, contentType: contentType, channel: channel, editTime: updateTime, token: token}, saveBlogCallback);
+                edit({title: titleAndMode.title, content: content, mode: titleAndMode.mode, contentType: contentType, channel: channel, editTime: updateTime, token: token}, saveBlogCallback, saveBlogOntimeout);
             }
         }
 

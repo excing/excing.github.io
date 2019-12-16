@@ -34,8 +34,9 @@ function get(url, callback, error) {
     xmlHttp.send();
 }
 
-function post(url, params, callback) {
+function post(url, params, callback, ontimeout) {
     callback = callback || function(data) {}
+    ontimeout = ontimeout || function(data) {}
 
     xmlHttp = createXMLHttpRequest();
     xmlHttp.open("POST", url, true);// 异步处理返回
@@ -45,6 +46,9 @@ function post(url, params, callback) {
             callback(b);
         }
     };
+
+    xmlHttp.timeout = 5000;
+    xmlHttp.ontimeout = ontimeout;
 
     var postText = "";
 
@@ -121,8 +125,8 @@ function online(token, callback) {
     post(api_domain + 'online', {token: token}, callback);
 }
 
-function edit(blog, callback) {
-    postJson(api_domain + 'edit', blog, callback); 
+function edit(blog, callback, ontimeout) {
+    postJson(api_domain + 'edit', blog, callback, ontimeout); 
 }
 
 function list(token, pageNumber, callback) {
