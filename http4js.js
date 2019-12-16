@@ -130,7 +130,7 @@ function list(token, pageNumber, callback) {
 }
 
 function del(token, blogId, callback) {
-    post(api_domain + "delete/" + blogId, {token: token}, callback);
+    post(api_domain + "del/" + blogId, {token: token}, callback);
 }
 
 function view(token, blogId, callback) {
